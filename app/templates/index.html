@@ -1,0 +1,28 @@
+{% extends "_template.html" %}
+
+{% block container %}
+{{ super() }}
+<div class="jumbotron">
+    <h1>Vector Tiles</h1>
+    <p class="lead">Simple vector tiles for your map, based on Mapzen's Tilezen.</p>
+    <p><a class="btn btn-lg btn-success" href="{{ url_for('auth.login') }}" role="button">Sign up today</a></p>
+</div>
+
+<div class="row marketing">
+    <div class="col-lg-6">
+        <h4>Subheading</h4>
+        <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+
+    </div>
+
+    <div class="col-lg-6">
+        <h4>Subheading</h4>
+        <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
+
+    </div>
+</div>
+
+<footer class="footer">
+<p>&copy; 2016 Company, Inc.</p>
+</footer>
+{% endblock %}

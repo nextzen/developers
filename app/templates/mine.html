@@ -1,0 +1,34 @@
+{% extends "_template.html" %}
+
+{% block container %}
+{{ super() }}
+<div class='page-header'>
+    <h3>API Keys</h3>
+</div>
+
+{%- with messages = get_flashed_messages(with_categories=True) %}
+{%- if messages %}
+<div class="row">
+  <div class="col-md-12">
+    {{utils.flashed_messages(messages)}}
+  </div>
+</div>
+{%- endif %}
+{%- endwith %}
+
+{% for key in current_user.api_keys %}
+<div class="panel panel-default">
+  <div class="panel-body">
+    API Key:&nbsp;<code>{{ key.api_key }}</code>
+    <p>Created on {{ key.created_at }}.</p>
+  </div>
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">You have no API keys.</div>
+{% endfor %}
+
+<form method="POST" action="{{ url_for('apikey.create') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <button class="btn btn-default" type="submit">Create a new API key</button>
+</form>
+{% endblock %}
