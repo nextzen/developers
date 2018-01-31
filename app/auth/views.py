@@ -48,7 +48,7 @@ def logout():
 @auth_bp.route('/authorize/<provider>')
 def oauth_authorize(provider):
     if not current_user.is_anonymous:
-        return redirect(url_for('apikey.index'))
+        return redirect(url_for('apikey.mine'))
     oauth = OAuthSignIn.get_provider(provider)
     return oauth.authorize()
 

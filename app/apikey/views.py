@@ -41,13 +41,13 @@ def contact():
     return render_template('contact.html')
 
 
-@keys_bp.route('/mine')
+@keys_bp.route('/keys/mine')
 @login_required
 def mine():
-    return render_template('mine.html')
+    return render_template('apikey/mine.html')
 
 
-@keys_bp.route('/create', methods=['POST'])
+@keys_bp.route('/keys/create', methods=['POST'])
 @login_required
 def create():
     k = ApiKey.generate_random_key_for(current_user)
@@ -56,3 +56,34 @@ def create():
     flash('You created a new API key!', 'success')
 
     return redirect(url_for('apikey.mine'))
+
+
+@keys_bp.route('/keys/<apikey>', methods=['GET', 'POST'])
+@login_required
+def show(apikey):
+    k = ApiKey.get_by_api_key_or_404(apikey)
+
+    if k.person_id != current_user.id:
+        flash("That key doens't belong to you")
+        return redirect(url_for('apikey.mine'))
+
+    if request.method == 'POST':
+        if request.form.get('action') == 'save':
+            new_name = request.form.get('name')
+            k.name = new_name
+            db.session.add(k)
+            db.session.commit()
+
+            flash("The note on this key was saved.")
+        elif request.form.get('action') == 'disable':
+            k.enabled = False
+            db.session.add(k)
+            db.session.commit()
+            flash("This API key was disabled and will no longer allow requests after a few minutes.")
+
+        return redirect(url_for('apikey.show', apikey=apikey))
+
+    return render_template(
+        'apikey/show.html',
+        key=k,
+    )

@@ -1,0 +1,37 @@
+{% extends "_template.html" %}
+
+{% block container %}
+{{ super() }}
+<div class='page-header'>
+    <h3>API Key <code>{{ key.api_key }}</code></h3>
+</div>
+
+{%- with messages = get_flashed_messages(with_categories=True) %}
+{%- if messages %}
+<div class="row">
+  <div class="col-md-12">
+    {{utils.flashed_messages(messages)}}
+  </div>
+</div>
+{%- endif %}
+{%- endwith %}
+
+<form method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <div class="form-group">
+    <label for="apikey-note">Name</label>
+    <input type="text" class="form-control" id="apikey-note" name="name" placeholder="Short description to help you remember what this API key was used for." value="{{ key.name or '' }}">
+  </div>
+  <button class="btn btn-primary" type="submit" name="action" value="save">Save Changes</button>
+  {% if key.enabled %}
+  <button class="btn btn-danger" type="submit" name="action" value="disable">Disable</button>
+  {% else %}
+  <button class="btn btn-danger" type="submit" name="action" value="enable">Enable</button>
+  {% endif %}
+
+</form>
+
+<h3>Usage Statistics</h3>
+
+<p>Coming soon.</p>
+{% endblock %}

@@ -42,3 +42,7 @@ class ApiKey(db.Model):
             person_id=user.id,
             api_key=key_generator(),
         )
+
+    @classmethod
+    def get_by_api_key_or_404(clz, apikey):
+        return clz.query.filter_by(api_key=apikey).first_or_404()
