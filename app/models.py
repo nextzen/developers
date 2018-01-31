@@ -1,5 +1,6 @@
 import base64
 import datetime
+import fnmatch
 import uuid
 from app import db, login_manager
 from flask_login import UserMixin, current_user
@@ -34,7 +35,8 @@ class ApiKey(db.Model):
     person_id = db.Column(UUID(as_uuid=True), db.ForeignKey('people.id'))
     api_key = db.Column(db.String(120), index=True)
     name = db.Column(db.String(120))
-    enabled = db.Column(db.Boolean(), default=True)
+    allowed_referers = db.Column(db.Text)
+    enabled = db.Column(db.Boolean(), default=True, nullable=False)
 
     @classmethod
     def generate_random_key_for(clz, user):
@@ -46,3 +48,16 @@ class ApiKey(db.Model):
     @classmethod
     def get_by_api_key_or_404(clz, apikey):
         return clz.query.filter_by(api_key=apikey).first_or_404()
+
+    def is_referer_allowed(self, referer):
+        if not self.allowed_referers:
+            return True
+        else:
+            if not referer:
+                return False
+
+            allowed_referers = self.allowed_referers.splitlines()
+            for allowed_referer in allowed_referers:
+                if fnmatch.fnmatch(referer, allowed_referer):
+                    return True
+            return False
