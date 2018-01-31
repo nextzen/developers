@@ -104,6 +104,15 @@ def show(apikey):
             db.session.add(k)
             db.session.commit()
             flash("This API key was enabled and will start allowing requests after a few minutes.")
+        elif request.form.get('action') == 'delete':
+            if k.enabled:
+                flash("Please disable the key before attempting to delete it.")
+                return redirect(url_for('apikey.show', apikey=apikey))
+
+            db.session.delete(k)
+            db.session.commit()
+            flash("This API key %s was deleted." % apikey)
+            return redirect(url_for('apikey.mine'))
 
         return redirect(url_for('apikey.show', apikey=apikey))
 
