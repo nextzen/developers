@@ -94,16 +94,22 @@ def show(apikey):
                 k.allowed_referers = new_allowed_referers.strip().splitlines()
 
             k.save()
+            current_user.api_keys[k.api_key] = k.as_dict()
+            current_user.save()
 
             flash("The details for this key were saved.")
         elif request.form.get('action') == 'disable':
             k.enabled = False
             k.save()
+            current_user.api_keys[k.api_key] = k.as_dict()
+            current_user.save()
 
             flash("This API key was disabled and will stop allowing requests after a few minutes.")
         elif request.form.get('action') == 'enable':
             k.enabled = True
             k.save()
+            current_user.api_keys[k.api_key] = k.as_dict()
+            current_user.save()
 
             flash("This API key was enabled and will start allowing requests after a few minutes.")
         elif request.form.get('action') == 'delete':
@@ -112,6 +118,8 @@ def show(apikey):
                 return redirect(url_for('apikey.show', apikey=apikey))
 
             k.delete()
+            current_user.api_keys.pop(k.api_key, None)
+            current_user.save()
 
             flash("This API key %s was deleted." % apikey)
             return redirect(url_for('apikey.mine'))
