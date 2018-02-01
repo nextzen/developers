@@ -1,5 +1,7 @@
 {% extends "_template.html" %}
 
+{% block title %}Nextzen Developers - Your API Keys{% endblock %}
+
 {% block container %}
 {{ super() }}
 <div class='page-header'>
@@ -9,12 +11,12 @@
 {%- with messages = get_flashed_messages(with_categories=True) %}
 {%- if messages %}
 <div class="row">
-    {{utils.flashed_messages(messages)}}
+  {{utils.flashed_messages(messages)}}
 </div>
 {%- endif %}
 {%- endwith %}
 
-{% for key in current_user.api_keys %}
+{% for key in current_user.api_keys.values() %}
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title"><a href="{{ url_for('apikey.show', apikey=key.api_key) }}">API Key <code>{{ key.api_key }}</code></a></h3>

@@ -8,10 +8,8 @@ name = "pypi"
 [packages]
 
 flask = "*"
-flask-migrate = "*"
-flask-sqlalchemy = "*"
-"psycopg2" = "*"
 flask-bootstrap = "*"
+"flask-boto3" = "*"
 flask-caching = "*"
 flask-login = "*"
 flask-wtf = "*"
@@ -20,3 +18,4 @@ rauth = "*"
 
 [dev-packages]
 
+zappa = "*"

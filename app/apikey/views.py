@@ -16,8 +16,7 @@ from flask import (
 from flask_login import current_user, login_required
 from six.moves.urllib.parse import urlparse
 from . import keys_bp
-from ..models import ApiKey
-from .. import db
+from ..storage import ApiKey
 
 
 @keys_bp.route('/robots.txt')
@@ -51,9 +50,9 @@ def mine():
 @keys_bp.route('/keys/create', methods=['POST'])
 @login_required
 def create():
-    k = ApiKey.generate_random_key_for(current_user)
-    db.session.add(k)
-    db.session.commit()
+    k = current_user.generate_random_key()
+    k.save()
+    current_user.save()
     flash('You created a new API key!', 'success')
 
     return redirect(url_for('apikey.mine'))
@@ -72,9 +71,12 @@ def validate_allowed_referers(referers):
 @keys_bp.route('/keys/<apikey>', methods=['GET', 'POST'])
 @login_required
 def show(apikey):
-    k = ApiKey.get_by_api_key_or_404(apikey)
+    k = ApiKey.get_by_api_key(apikey)
 
-    if k.person_id != current_user.id:
+    if not k:
+        return redirect(url_for('apikey.mine'))
+
+    if k.person_id != current_user.get_id():
         flash("That key doens't belong to you")
         return redirect(url_for('apikey.mine'))
 
@@ -88,29 +90,29 @@ def show(apikey):
                 flash("Please enter one referer URL per line or empty the box completely")
                 return redirect(url_for('apikey.show', apikey=apikey))
 
-            k.allowed_referers = new_allowed_referers
+            if new_allowed_referers.strip():
+                k.allowed_referers = new_allowed_referers.strip().splitlines()
 
-            db.session.add(k)
-            db.session.commit()
+            k.save()
 
             flash("The details for this key were saved.")
         elif request.form.get('action') == 'disable':
             k.enabled = False
-            db.session.add(k)
-            db.session.commit()
+            k.save()
+
             flash("This API key was disabled and will stop allowing requests after a few minutes.")
         elif request.form.get('action') == 'enable':
             k.enabled = True
-            db.session.add(k)
-            db.session.commit()
+            k.save()
+
             flash("This API key was enabled and will start allowing requests after a few minutes.")
         elif request.form.get('action') == 'delete':
             if k.enabled:
                 flash("Please disable the key before attempting to delete it.")
                 return redirect(url_for('apikey.show', apikey=apikey))
 
-            db.session.delete(k)
-            db.session.commit()
+            k.delete()
+
             flash("This API key %s was deleted." % apikey)
             return redirect(url_for('apikey.mine'))
 
@@ -123,7 +125,7 @@ def show(apikey):
 
 @keys_bp.route('/verify/<apikey>')
 def verify_key(apikey):
-    k = ApiKey.query.filter_by(api_key=apikey).first()
+    k = ApiKey.get_by_api_key(apikey)
 
     if not k:
         return jsonify(result='error', message='Unknown API key.'), 400

@@ -8,6 +8,10 @@ class Config:
     DEBUG = os.environ.get('FLASK_DEBUG', False)
     PREFERRED_URL_SCHEME = 'https'
 
+    BOTO3_SERVICES = ['s3']
+    STORAGE_S3_BUCKET = os.environ.get('STORAGE_S3_BUCKET')
+    STORAGE_S3_PREFIX = ''
+
     OAUTH_CREDENTIALS = {
         'facebook': {
             'id': os.environ.get('FACEBOOK_CLIENT_ID'),
@@ -31,6 +35,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = os.environ.get('FLASK_DEBUG', True)
     ENABLE_PROXYFIX = os.environ.get('ENABLE_PROXYFIX')
+    STORAGE_S3_PREFIX = 'dev'
 
     @classmethod
     def init_app(cls, app):
@@ -45,6 +50,7 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
+    STORAGE_S3_PREFIX = 'prod'
 
 
 config = {

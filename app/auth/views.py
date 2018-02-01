@@ -1,3 +1,4 @@
+import datetime
 from flask import (
     current_app,
     flash,
@@ -11,8 +12,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from six.moves.urllib.parse import urlparse, urljoin
 from . import auth_bp
 from .oauth import OAuthSignIn
-from .. import db
-from ..models import Person
+from ..storage import User
 
 
 def is_safe_url(target):
@@ -66,11 +66,15 @@ def oauth_callback(provider):
               "Please contact us!", 'error')
         return redirect(url_for('apikey.login'))
 
-    user = Person.query.filter_by(social_id=social_id).first()
+    user = User.get_by_user_id(social_id)
     if not user:
-        user = Person(social_id=social_id, email=email)
-        db.session.add(user)
-        db.session.commit()
+        user = User(
+            email=email,
+            social_id=social_id,
+            created_at=datetime.datetime.utcnow(),
+            api_keys={},
+        )
+        user.save()
 
         flash("Thanks for signing up! You can create your first API key below.", 'success')
     login_user(user, True)

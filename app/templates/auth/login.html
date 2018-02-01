@@ -16,7 +16,15 @@
 {%- endif %}
 {%- endwith %}
 
+{% if config['OAUTH_CREDENTIALS']['facebook'].get('id') %}
 <p><a href="{{ url_for('auth.oauth_authorize', provider='facebook') }}">Login with Facebook</a></p>
+{% endif %}
+
+{% if config['OAUTH_CREDENTIALS']['google'].get('id') %}
 <p><a href="{{ url_for('auth.oauth_authorize', provider='google') }}">Login with Google</a></p>
+{% endif %}
+
+{% if config['OAUTH_CREDENTIALS']['github'].get('id') %}
 <p><a href="{{ url_for('auth.oauth_authorize', provider='github') }}">Login with GitHub</a></p>
+{% endif %}
 {% endblock %}
