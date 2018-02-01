@@ -55,7 +55,7 @@ def create():
     current_user.save()
     flash('You created a new API key!', 'success')
 
-    return redirect(url_for('apikey.mine'))
+    return redirect(url_for('apikey.show', apikey=k.api_key))
 
 
 def validate_allowed_referers(referers):
