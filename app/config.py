@@ -12,6 +12,8 @@ class Config:
     STORAGE_S3_BUCKET = os.environ.get('STORAGE_S3_BUCKET')
     STORAGE_S3_PREFIX = ''
 
+    SENTRY_ENABLE = os.environ.get('SENTRY_ENABLE') == 'true'
+
     OAUTH_CREDENTIALS = {
         'facebook': {
             'id': os.environ.get('FACEBOOK_CLIENT_ID'),
