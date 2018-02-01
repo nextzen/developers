@@ -66,7 +66,7 @@ def oauth_callback(provider):
               "Please contact us!", 'error')
         return redirect(url_for('apikey.login'))
 
-    user = User.get_by_user_id(social_id)
+    user = User.get_by_email(email)
     if not user:
         user = User(
             email=email,
