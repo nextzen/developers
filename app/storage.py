@@ -26,8 +26,8 @@ def load_user(id):
 class User(UserMixin):
     def __init__(self, email, social_id, created_at, api_keys=None):
         self.email = email
-        self.user_id = hash_base64(self.email)
         self.social_id = social_id
+        self.user_id = hash_base64(self.social_id)
         self.api_keys = api_keys or {}
         self.created_at = created_at
 
@@ -48,8 +48,8 @@ class User(UserMixin):
             return None
 
     @classmethod
-    def get_by_email(clz, email):
-        user_id = hash_base64(email)
+    def get_by_social_id(clz, social_id):
+        user_id = hash_base64(social_id)
         return clz.get_by_user_id(user_id)
 
     @classmethod
