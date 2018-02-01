@@ -42,6 +42,7 @@ def create_app(config_name):
     sentry = None
     if app.config.get('SENTRY_ENABLE'):
         app.logger.info("Using Sentry")
+        from raven.contrib.flask import Sentry
         sentry = Sentry(app)
 
     @app.errorhandler(500)
