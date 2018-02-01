@@ -35,10 +35,8 @@ class User(UserMixin):
         return self.user_id
 
     @classmethod
-    def get_by_email(clz, email):
+    def get_by_user_id(clz, user_id):
         try:
-            user_id = hash_base64(email)
-
             res = flask_boto.clients['s3'].get_object(
                 Bucket=current_app.config.get('STORAGE_S3_BUCKET'),
                 Key=posixpath.join(current_app.config.get('STORAGE_S3_PREFIX'), 'users', user_id),
@@ -48,6 +46,11 @@ class User(UserMixin):
 
         except flask_boto.clients['s3'].exceptions.NoSuchKey:
             return None
+
+    @classmethod
+    def get_by_email(clz, email):
+        user_id = hash_base64(email)
+        return clz.get_by_user_id(user_id)
 
     @classmethod
     def from_dict(clz, data):
