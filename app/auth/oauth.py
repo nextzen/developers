@@ -122,7 +122,7 @@ class GithubSignIn(OAuthSignIn):
 
     def authorize(self):
         return redirect(self.service.get_authorize_url(
-            scope='email',
+            scope='user:email',
             response_type='code',
             redirect_uri=self.get_callback_url())
         )
