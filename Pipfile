@@ -14,7 +14,7 @@ flask-caching = "*"
 flask-login = "*"
 flask-wtf = "*"
 rauth = "*"
-raven = {extras = ["sentry"]}
+raven = {extras = ["flask"]}
 
 
 [dev-packages]
