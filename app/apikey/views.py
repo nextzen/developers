@@ -92,6 +92,8 @@ def show(apikey):
 
             if new_allowed_referers.strip():
                 k.allowed_referers = new_allowed_referers.strip().splitlines()
+            else:
+                k.allowed_referers = None
 
             k.save()
             current_user.api_keys[k.api_key] = k.as_dict()
