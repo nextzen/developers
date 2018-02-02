@@ -131,8 +131,13 @@ def show(apikey):
         key=k,
     )
 
-@keys_bp.route('/verify/<apikey>')
-def verify_key(apikey):
+@keys_bp.route('/verify')
+def verify_key():
+    apikey = request.args.get('api_key')
+
+    if not apikey:
+        return jsonify(result='error', message='Specify a api_key query arg to check.'), 400
+
     k = ApiKey.get_by_api_key(apikey)
 
     if not k:
@@ -142,6 +147,7 @@ def verify_key(apikey):
         return jsonify(result='error', message='Disabled API key.'), 400
 
     referer = request.args.get('referer')
+
     if not k.is_referer_allowed(referer):
         return jsonify(result='error', message='Referer is not allowed by API key.'), 400
 
