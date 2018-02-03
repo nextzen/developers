@@ -19,7 +19,7 @@
 {% for key in current_user.api_keys.values() %}
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title"><a href="{{ url_for('apikey.show', apikey=key.api_key) }}">API Key <code>{{ key.api_key }}</code></a></h3>
+    <h3 class="panel-title"><a href="{{ url_for('apikey.show', apikey=key.api_key) }}">✎ API Key <code>{{ key.api_key }}</code></a></h3>
   </div>
   <div class="panel-body">
     <dl class="dl-horizontal">
@@ -32,6 +32,9 @@
       <dd>{{ key.name }}</dd>
     </dl>
     {% endif %}
+    <dl class="dl-horizontal">
+      <dt><a href="{{ url_for('apikey.show', apikey=key.api_key) }}">Edit key name and allowed referers</a></dt>
+    </dl>
   </div>
 </div>
 {% else %}
