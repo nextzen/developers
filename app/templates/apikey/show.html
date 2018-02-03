@@ -2,10 +2,15 @@
 
 {% block title %}Nextzen Developers - API Key {{ key.api_key }}{% endblock %}
 
+{% block scripts %}
+{{ super() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+{% endblock %}
+
 {% block container %}
 {{ super() }}
 <div class='page-header'>
-    <h3>API Key <code>{{ key.api_key }}</code></h3>
+    <h3>API Key <code>{{ key.api_key }}</code><button class="btn" data-clipboard-text="{{ key.api_key }}"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></button></h3>
 </div>
 
 {%- with messages = get_flashed_messages(with_categories=True) %}

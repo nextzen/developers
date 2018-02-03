@@ -2,6 +2,11 @@
 
 {% block title %}Nextzen Developers - Your API Keys{% endblock %}
 
+{% block scripts %}
+{{ super() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+{% endblock %}
+
 {% block container %}
 {{ super() }}
 <div class='page-header'>
@@ -19,7 +24,7 @@
 {% for key in current_user.api_keys.values() %}
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">✍ API Key <code>{{ key.api_key }}</code></h3>
+    <h3 class="panel-title">✍ API Key <code id="api_key">{{ key.api_key }}</code><button class="btn" data-clipboard-text="{{ key.api_key }}"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></button></h3>
   </div>
   <div class="panel-body">
     <dl class="dl-horizontal">
