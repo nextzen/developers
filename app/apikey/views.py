@@ -58,12 +58,12 @@ def create():
     return redirect(url_for('apikey.show', apikey=k.api_key))
 
 
-def validate_allowed_referers(referers):
-    referers = referers.strip()
-    referers = referers.splitlines()
-    for referer in referers:
-        ref_url = urlparse(referer)
-        if not ref_url.netloc or ref_url.scheme not in ('http', 'https'):
+def validate_allowed_origins(origins):
+    origins = origins.strip()
+    origins = origins.splitlines()
+    for origin in origins:
+        origin = urlparse(origin)
+        if not origin.netloc or origin.scheme not in ('http', 'https'):
             return False
     return True
 
@@ -85,15 +85,15 @@ def show(apikey):
             new_name = request.form.get('name')
             k.name = new_name
 
-            new_allowed_referers = request.form.get('allowed_referers')
-            if not validate_allowed_referers(new_allowed_referers):
-                flash("Please enter one referer URL per line or empty the box completely")
+            new_allowed_origins = request.form.get('allowed_origins')
+            if not validate_allowed_origins(new_allowed_origins):
+                flash("Please enter one origin URL per line or empty the box completely")
                 return redirect(url_for('apikey.show', apikey=apikey))
 
-            if new_allowed_referers.strip():
-                k.allowed_referers = new_allowed_referers.strip().splitlines()
+            if new_allowed_origins.strip():
+                k.allowed_origins = new_allowed_origins.strip().splitlines()
             else:
-                k.allowed_referers = None
+                k.allowed_origins = None
 
             k.save()
             current_user.api_keys[k.api_key] = k.as_dict()
@@ -148,9 +148,9 @@ def verify_key():
     if not k.enabled:
         return jsonify(result='error', message='Disabled API key.'), 400
 
-    referer = request.args.get('referer')
+    origin = request.args.get('origin')
 
-    if not k.is_referer_allowed(referer):
-        return jsonify(result='error', message='Referer is not allowed by API key.'), 400
+    if not k.is_origin_allowed(origin):
+        return jsonify(result='error', message='Origin is not allowed by API key.'), 400
 
     return jsonify(result='success', message='Valid API key.')

@@ -57,6 +57,14 @@
       <dd><span class="label label-warning">Disabled</span></dd>
     {% endif %}
     </dl>
+    <dl class="dl-horizontal">
+      <dt>Allowed Origins</dt>
+      {% if key.allowed_origins %}
+      <dd>{{ ', '.join(key.allowed_origins) }}</dd>
+      {% else %}
+      <dd><em>Allow all</em></dd>
+      {% endif %}
+    </dl>
     <a class="btn btn-default" role="button" href="{{ url_for('apikey.show', apikey=key.api_key) }}">Edit this key</a>
   </div>
 </div>

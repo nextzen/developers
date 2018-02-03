@@ -85,12 +85,12 @@ class User(UserMixin):
 
 
 class ApiKey(object):
-    def __init__(self, person_id, api_key, enabled, name=None, allowed_referers=None, created_at=None):
+    def __init__(self, person_id, api_key, enabled, name=None, allowed_origins=None, created_at=None):
         self.created_at = created_at
         self.person_id = person_id
         self.api_key = api_key
         self.name = name
-        self.allowed_referers = allowed_referers
+        self.allowed_origins = allowed_origins
         self.enabled = enabled
 
     @classmethod
@@ -122,7 +122,7 @@ class ApiKey(object):
             api_key=data['api_key'],
             enabled=data['enabled'],
             name=data['name'],
-            allowed_referers=data['allowed_referers'],
+            allowed_origins=data['allowed_origins'],
             created_at=datetime.datetime.utcfromtimestamp(data['created_at'] / 1000),
         )
 
@@ -132,7 +132,7 @@ class ApiKey(object):
             "api_key": self.api_key,
             "enabled": self.enabled,
             "name": self.name,
-            "allowed_referers": self.allowed_referers,
+            "allowed_origins": self.allowed_origins,
             "created_at": int(self.created_at.timestamp() * 1000),
         }
 
@@ -151,14 +151,14 @@ class ApiKey(object):
             Key=posixpath.join(current_app.config.get('STORAGE_S3_PREFIX'), 'keys', self.api_key),
         )
 
-    def is_referer_allowed(self, referer):
-        if not self.allowed_referers:
+    def is_origin_allowed(self, origin):
+        if not self.allowed_origins:
             return True
         else:
-            if not referer:
+            if not origin:
                 return False
 
-            for allowed_referer in self.allowed_referers:
-                if fnmatch.fnmatch(referer, allowed_referer):
+            for allowed_origin in self.allowed_origins:
+                if fnmatch.fnmatch(origin, allowed_origin):
                     return True
             return False
