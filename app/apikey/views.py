@@ -41,7 +41,7 @@ def contact():
     return render_template('contact.html')
 
 
-@keys_bp.route('/keys/mine')
+@keys_bp.route('/keys')
 @login_required
 def mine():
     return render_template('apikey/mine.html')
