@@ -7,7 +7,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
 <script type="text/javascript">
   $(function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    var clipboards = new Clipboard('.btn');
+    $('[data-toggle="tooltip"]').tooltip({
+      placement: "bottom",
+      trigger: "click"
+    });
     $('[data-toggle="tooltip"]').on('mouseleave', function () {
       $(this).tooltip('hide');
     });

@@ -7,7 +7,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
 <script type="text/javascript">
   $(function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    var clipboards = new Clipboard('.btn');
+    $('[data-toggle="tooltip"]').tooltip({
+      placement: "bottom",
+      trigger: "click"
+    });
     $('[data-toggle="tooltip"]').on('mouseleave', function () {
       $(this).tooltip('hide');
     });
@@ -18,7 +22,7 @@
 {% block container %}
 {{ super() }}
 <div class='page-header'>
-    <h3>API Key <code>{{ key.api_key }}</code><button class="btn" data-clipboard-text="{{ key.api_key }}" data-toggle="tooltip" data-placement="bottom" data-trigger="click" title="Copied to clipboard!"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></button></h3>
+    <h3>API Key <code>{{ key.api_key }}</code><button class="btn" data-clipboard-text="{{ key.api_key }}" data-toggle="tooltip" title="Copied to clipboard!"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></button></h3>
 </div>
 
 {%- with messages = get_flashed_messages(with_categories=True) %}
