@@ -57,9 +57,7 @@
       <dd><span class="label label-warning">Disabled</span></dd>
     {% endif %}
     </dl>
-    <dl class="dl-horizontal">
-      <dt><a href="{{ url_for('apikey.show', apikey=key.api_key) }}">Edit key name and allowed referers</a></dt>
-    </dl>
+    <a class="btn btn-default" role="button" href="{{ url_for('apikey.show', apikey=key.api_key) }}">Edit this key</a>
   </div>
 </div>
 {% else %}
