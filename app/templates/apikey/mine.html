@@ -5,6 +5,14 @@
 {% block scripts %}
 {{ super() }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+<script type="text/javascript">
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').on('mouseleave', function () {
+      $(this).tooltip('hide');
+    });
+  })
+</script>
 {% endblock %}
 
 {% block container %}
@@ -24,7 +32,7 @@
 {% for key in current_user.api_keys.values() %}
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">✍ API Key <code id="api_key">{{ key.api_key }}</code><button class="btn" data-clipboard-text="{{ key.api_key }}"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></button></h3>
+    <h3 class="panel-title">✍ API Key <code id="api_key">{{ key.api_key }}</code><button class="btn" data-clipboard-text="{{ key.api_key }}" data-toggle="tooltip" data-placement="bottom" data-trigger="click" title="Copied to clipboard!"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></button></h3>
   </div>
   <div class="panel-body">
     <dl class="dl-horizontal">
