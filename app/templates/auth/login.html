@@ -3,7 +3,8 @@
 {% block container %}
 {{ super() }}
 <div class='page-header'>
-    <h3>Login</h3>
+    <h3>Welcome back!</h3>
+    <p>Sign in to your Nextzen account to manage API keys</p>
 </div>
 
 {%- with messages = get_flashed_messages(with_categories=True) %}
@@ -17,14 +18,14 @@
 {%- endwith %}
 
 {% if config['OAUTH_CREDENTIALS']['facebook'].get('id') %}
-<p><a href="{{ url_for('auth.oauth_authorize', provider='facebook') }}">Login with Facebook</a></p>
+<p><a href="{{ url_for('auth.oauth_authorize', provider='facebook') }}">Continue with Facebook</a></p>
 {% endif %}
 
 {% if config['OAUTH_CREDENTIALS']['google'].get('id') %}
-<p><a href="{{ url_for('auth.oauth_authorize', provider='google') }}">Login with Google</a></p>
+<p><a href="{{ url_for('auth.oauth_authorize', provider='google') }}">Continue with Google</a></p>
 {% endif %}
 
 {% if config['OAUTH_CREDENTIALS']['github'].get('id') %}
-<p><a href="{{ url_for('auth.oauth_authorize', provider='github') }}">Login with GitHub</a></p>
+<p><a href="{{ url_for('auth.oauth_authorize', provider='github') }}">Continue with GitHub</a></p>
 {% endif %}
 {% endblock %}
