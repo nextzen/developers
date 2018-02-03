@@ -4,6 +4,53 @@
 {{ super() }}
 <div class='page-header'>
     <h3>About</h3>
+    <p>We're proud to offer long-term support for the maps, basemap designs, and the vector and terrain
+       tile data that have powered Mapzen's cartography. To enjoy the maps into the future, past Mapzen's
+       early 2018 shutdown, you'll need to make a few updates to your projects.</p>
+    
+    <p>Generally speaking you'll need to swap <code>mapzen.com</code> for <code>nextzen.org</code>, and include the <code>www</code> subdomain in URL paths.
+
+    <h4>Vector Tile Endpoints</h4>
+
+    <ul>
+      <li><code>https://tile.nextzen.org/tilezen/vector/v1/{tilesize}/all/{z}/{x}/{y}.mvt?api_key=your-nextzen-api-key</code></li>
+      <li><code>https://tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt?api_key=your-nextzen-api-key</code></li>
+      <li><code>https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.mvt?api_key=your-nextzen-api-key</code></li>
+      <li><code>https://tile.nextzen.org/tilezen/vector/v1/all/{z}/{x}/{y}.mvt?api_key=your-nextzen-api-key</code></li>
+    </ul>
+    
+    <h4>Terrain Tile Endpoints</h4>
+
+    <ul>
+      <li><code>https://tile.nextzen.org/tilezen/terrain/v1/{tilesize}/terrarium/{z}/{x}/{y}.png?api_key=your-nextzen-api-key</code></li>
+      <li><code>https://tile.nextzen.org/tilezen/terrain/v1/{tilesize}/normal/{z}/{x}/{y}.png?api_key=your-nextzen-api-key</code></li>
+      <li><code>https://tile.nextzen.org/tilezen/terrain/v1/geotiff/{z}/{x}/{y}.tif?api_key=your-nextzen-api-key</code></li>
+      <li><code>https://tile.nextzen.org/tilezen/terrain/v1/skadi/{N|S}{y}/{N|S}{y}{E|W}{x}.hgt.gz?api_key=your-nextzen-api-key</code></li>
+    </ul>
+    
+    <h4>Tangram JS Library</h4>
+
+    <ul>
+      <li><code><script type="text/javascript" src="https://www.nextzen.org/tangram/0.14/tangram.min.js"></script></code></li>
+    </ul>
+
+    <h4>Basemap Resources</h4>
+
+    <ul>
+      <li><code>https://www.nextzen.org/carto/bubble-wrap-style/9/bubble-wrap-style.zip</code></li>
+      <li><code>https://www.nextzen.org/carto/cinnabar-style/9/cinnabar-style.zip</code></li>
+      <li><code>https://www.nextzen.org/carto/refill-style/11/refill-style.zip</code></li>
+      <li><code>https://www.nextzen.org/carto/tron-style/6/tron-style.zip</code></li>
+      <li><code>https://www.nextzen.org/carto/walkabout-style/7/walkabout-style.zip</code></li>
+      <li><code>https://www.nextzen.org/carto/sdk-default-style/1.1/sdk-default-style.zip</code></li>
+    </ul>
+    
+    <h4>Learn More</h4>
+
+    <ul>
+      <li>Read <a href="https://mapzen.com/blog/long-term-support-mapzen-maps/">Long-term support for Mapzen maps, vector & terrain tiles</a> on the Mapzen blog (2019.01.30)</li>
+    </ul>
+    
 </div>
 
 <p>Nextzen is after <a href="https://mapzen.com">Mapzen</a>.</p>
