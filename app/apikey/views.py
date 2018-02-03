@@ -21,7 +21,7 @@ from ..storage import ApiKey
 
 @keys_bp.route('/robots.txt')
 def robotstxt():
-    resp = make_response(render_template('robots.txt'))
+    resp = make_response("User-agent: *\nDisallow: /")
     resp.headers["Content-type"] = "text/plain"
     return resp
 
