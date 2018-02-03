@@ -32,7 +32,13 @@
       <dd>{{ key.name }}</dd>
     </dl>
     {% endif %}
+  {% if key.enabled %}
+  {% else %}
     <dl class="dl-horizontal">
+        <dt>Status: <b>DISABLED</b></dt>
+    </dl>
+  {% endif %}
+  <dl class="dl-horizontal">
       <dt><a href="{{ url_for('apikey.show', apikey=key.api_key) }}">Edit key name and allowed referers</a></dt>
     </dl>
   </div>
