@@ -39,10 +39,16 @@ def login():
     return render_template('auth/login.html')
 
 
-@auth_bp.route('/logout', methods=['POST'])
+@auth_bp.route('/logout', methods=['GET', 'POST'])
 def logout():
-    logout_user()
-    return redirect(url_for('apikey.index'))
+    if request.method == 'POST':
+        logout_user()
+        return redirect(url_for('apikey.index'))
+    else:
+        if current_user.is_anonymous:
+            return redirect(url_for('apikey.index'))
+        else:
+            return render_template('auth/logout.html')
 
 
 @auth_bp.route('/authorize/<provider>')
