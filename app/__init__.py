@@ -57,7 +57,7 @@ def create_app(config_name):
     @app.errorhandler(500)
     def internal_server_error(error):
         return render_template(
-            '500.html',
+            'errors/500.html',
             event_id=g.sentry_event_id if 'sentry_event_id' in g else None,
             public_dsn=sentry.client.get_public_dsn('https') if sentry else None
         )
@@ -65,25 +65,25 @@ def create_app(config_name):
     @app.errorhandler(400)
     def error_400(error):
         return render_template(
-            '400.html'
+            'errors/400.html'
         )
 
     @app.errorhandler(403)
     def error_403(error):
         return render_template(
-            '403.html'
+            'errors/403.html'
         )
 
     @app.errorhandler(404)
     def error_404(error):
         return render_template(
-            '404.html'
+            'errors/404.html'
         )
 
     @app.errorhandler(405)
     def error_405(error):
         return render_template(
-            '405.html'
+            'errors/405.html'
         )
 
     @app.after_request
