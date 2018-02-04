@@ -13,6 +13,7 @@ from flask_boto3 import Boto3
 from flask_login import LoginManager, logout_user, current_user
 from flask_wtf.csrf import CSRFProtect
 from .config import config
+import datetime
 
 csrf = CSRFProtect()
 bootstrap = Bootstrap()
@@ -44,6 +45,14 @@ def create_app(config_name):
         app.logger.info("Using Sentry")
         from raven.contrib.flask import Sentry
         sentry = Sentry(app)
+
+    @app.template_filter('from_millis')
+    def _timestamp_to_datetime_filter(ts_millis):
+        return datetime.datetime.fromtimestamp(ts_millis / 1000)
+
+    @app.template_filter('nice_datetime')
+    def _datetime_format_filter(dt):
+        return dt.replace(microsecond=0).isoformat() + "Z"
 
     @app.errorhandler(500)
     def internal_server_error(error):
