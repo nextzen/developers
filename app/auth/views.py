@@ -42,7 +42,7 @@ def login():
 @auth_bp.route('/logout', methods=['POST'])
 def logout():
     logout_user()
-    return url_for('apikey.index')
+    return redirect(url_for('apikey.index'))
 
 
 @auth_bp.route('/authorize/<provider>')
