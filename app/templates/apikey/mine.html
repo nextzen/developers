@@ -42,7 +42,7 @@
 {% for key in current_user.api_keys.values() %}
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">✍ API Key <code id="api_key">{{ key.api_key }}</code><button class="btn" data-clipboard-text="{{ key.api_key }}" data-toggle="tooltip" data-placement="bottom" data-trigger="click" title="Copied to clipboard!"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></button></h3>
+    <h3 class="panel-title">API Key <code id="api_key">{{ key.api_key }}</code><button class="btn" data-clipboard-text="{{ key.api_key }}" data-toggle="tooltip" data-placement="bottom" data-trigger="click" title="Copied to clipboard!"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></button></h3>
   </div>
   <div class="panel-body">
     <dl class="dl-horizontal">
@@ -71,7 +71,7 @@
       <dd><em>Allow all</em></dd>
       {% endif %}
     </dl>
-    <a class="btn btn-default" role="button" href="{{ url_for('apikey.show', apikey=key.api_key) }}">Edit this key</a>
+    <a class="btn btn-default" role="button" href="{{ url_for('apikey.show', apikey=key.api_key) }}">✍ Edit this key</a>
   </div>
 </div>
 {% else %}
