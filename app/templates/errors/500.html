@@ -1,0 +1,20 @@
+{% extends "_template.html" %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.ravenjs.com/2.3.0/raven.min.js"></script>
+{% endblock %}
+
+{% block container %}
+<p>We ran into an error processing your request. Head back <a href="{{ url_for('apikey.index') }}">home</a>.</p>
+
+{% if event_id %}
+<script>
+    Raven.showReportDialog({
+        eventId: '{{ event_id }}',
+        dsn: '{{ public_dsn }}'
+    });
+</script>
+{% endif %}
+
+{% endblock %}
