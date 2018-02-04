@@ -22,7 +22,8 @@
 {% block container %}
 {{ super() }}
 <div class='page-header'>
-    <h3>API Key <code>{{ key.api_key }}</code><button class="btn" data-clipboard-text="{{ key.api_key }}" data-toggle="tooltip" title="Copied to clipboard!"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></button></h3>
+  <p><a href="{{ url_for('apikey.mine') }}">← Back to your API keys</a></p>
+  <h3>API Key <code>{{ key.api_key }}</code><button class="btn" data-clipboard-text="{{ key.api_key }}" data-toggle="tooltip" title="Copied to clipboard!"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span></button></h3>
 </div>
 
 {%- with messages = get_flashed_messages(with_categories=True) %}
@@ -38,18 +39,27 @@
   <div class="form-group">
     <label for="apikey-note">Name</label>
     <input type="text" class="form-control" id="apikey-note" name="name" placeholder="Short description to help you remember what this API key was used for." value="{{ key.name or '' }}">
+    <p class="help-block">A short bit of text to help you remember what this API key was created for.</p>
   </div>
   <div class="form-group">
     <label for="apikey-origins">Allowed Origins</label>
     <textarea class="form-control" id="apikey-origins" name="allowed_origins" placeholder="https://example.com">{{ '\n'.join(key.allowed_referers) if key.allowed_referers else '' }}</textarea>
+    <p class="help-block">Specify one URL per line. If set, this API key will only allow tile requests that have an <code>Origin</code> header set to one of these URLs.</p>
   </div>
   <div class="form-group">
     <button class="btn btn-primary" type="submit" name="action" value="save">Save Changes</button>
-  {% if key.enabled %}
-    <button class="btn btn-warning" type="submit" name="action" value="disable">Disable</button>
   </div>
+  <div class="form-group">
+    <div class="panel panel-default">
+      <div class="panel-body">
+  {% if key.enabled %}
+        <p class="help-block">Disabling your API key will block requests made using this API key. Due to caching, changes made may take several hours to take effect. You must disable an API key before deleting it.</p>
+        <button class="btn btn-warning" type="submit" name="action" value="disable">Disable</button>
   {% else %}
-    <button class="btn btn-warning" type="submit" name="action" value="enable">Enable</button>
+        <p class="help-block">Enabling your API key will allow requests made using this API key. Due to caching, changes made may take several hours to take effect.</p>
+        <button class="btn btn-warning" type="submit" name="action" value="enable">Enable</button>
+      </div>
+    </div>
   </div>
 
   <div class="form-group">
