@@ -1,0 +1,5 @@
+{% extends "_template.html" %}
+
+{% block container %}
+<p>You're not authorized to make that request. Head back <a href="{{ url_for('apikey.index') }}">home</a>.</p>
+{% endblock %}
