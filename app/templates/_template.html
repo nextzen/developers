@@ -73,9 +73,18 @@ body {
 <div class="header clearfix">
     <nav>
         <ul class="nav nav-pills pull-right">
-            <li role="presentation"><a href="{{ url_for('apikey.index') }}">Home</a></li>
             <li role="presentation"><a href="{{ url_for('apikey.about') }}">About</a></li>
             <li role="presentation"><a href="{{ url_for('apikey.contact') }}">Contact</a></li>
+            {% if current_user.is_anonymous %}
+            <li role="presentation"><a href="{{ url_for('auth.login') }}">Login</a></li>
+            {% else %}
+            <li role="presentation">
+                <form id="logout_form" method="POST" action="{{ url_for('auth.logout') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                </form>
+                <a href="#" onclick="$('#logout_form').submit()">Logout</a>
+            </li>
+            {% endif %}
         </ul>
     </nav>
     <h3 class="text-muted">Nextzen Developers</h3>
