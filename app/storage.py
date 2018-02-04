@@ -122,7 +122,7 @@ class ApiKey(object):
             api_key=data['api_key'],
             enabled=data['enabled'],
             name=data['name'],
-            allowed_origins=data['allowed_origins'],
+            allowed_origins=data.get('allowed_origins'),
             created_at=datetime.datetime.utcfromtimestamp(data['created_at'] / 1000),
         )
 
