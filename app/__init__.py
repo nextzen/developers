@@ -58,7 +58,7 @@ def create_app(config_name):
     def internal_server_error(error):
         return render_template(
             '500.html',
-            event_id=g.sentry_event_id,
+            event_id=g.sentry_event_id if 'sentry_event_id' in g else None,
             public_dsn=sentry.client.get_public_dsn('https') if sentry else None
         )
 
