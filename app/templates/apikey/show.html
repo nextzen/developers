@@ -43,7 +43,7 @@
   </div>
   <div class="form-group">
     <label for="apikey-origins">Allowed Origins</label>
-    <textarea class="form-control" id="apikey-origins" name="allowed_origins" placeholder="https://example.com">{{ '\n'.join(key.allowed_referers) if key.allowed_referers else '' }}</textarea>
+    <textarea class="form-control" id="apikey-origins" name="allowed_origins" placeholder="https://example.com">{{ '\n'.join(key.allowed_origins) if key.allowed_origins else '' }}</textarea>
     <p class="help-block">Specify one URL per line. If set, this API key will only allow tile requests that have an <code>Origin</code> header set to one of these URLs.</p>
   </div>
   <div class="form-group">
