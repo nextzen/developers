@@ -7,6 +7,7 @@ from flask import (
     render_template,
     url_for
 )
+from cachetools import LFUCache
 from flask_bootstrap import Bootstrap
 from flask_caching import Cache
 from flask_boto3 import Boto3
@@ -14,6 +15,7 @@ from flask_login import LoginManager, logout_user, current_user
 from flask_wtf.csrf import CSRFProtect
 from .config import config
 import datetime
+import sys
 
 csrf = CSRFProtect()
 bootstrap = Bootstrap()
@@ -29,6 +31,7 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
+    app.extensions['lfu_cache'] = LFUCache(100e6, getsizeof=lambda i: sys.getsizeof(i)) # ~100 MB
 
     csrf.init_app(app)
     bootstrap.init_app(app)

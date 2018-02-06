@@ -36,15 +36,25 @@ class User(UserMixin):
 
     @classmethod
     def get_by_user_id(clz, user_id):
+        cache = current_app.extensions['lfu_cache']
+        cached = cache.get('user.%s' % user_id)
+        if cached:
+            current_app.logger.info("Found user %s in cache: %s", user_id, cached.as_dict())
+            return cached
+
         try:
             res = flask_boto.clients['s3'].get_object(
                 Bucket=current_app.config.get('STORAGE_S3_BUCKET'),
                 Key=posixpath.join(current_app.config.get('STORAGE_S3_PREFIX'), 'users', user_id),
             )
             data = json.loads(res['Body'].read().decode('utf8'))
-            return clz.from_dict(data)
+            obj = clz.from_dict(data)
+            cache['user.%s' % user_id] = obj
+            current_app.logger.info("Stored user %s in cache", user_id)
+            return obj
 
         except flask_boto.clients['s3'].exceptions.NoSuchKey:
+            cache.set(user_id, None)
             return None
 
     @classmethod
@@ -77,6 +87,8 @@ class User(UserMixin):
             Body=data,
             ContentType='application/json',
         )
+        cache = current_app.extensions['lfu_cache']
+        cache.pop('user.%s' % self.user_id, None)
 
     def generate_random_key(self):
         k = ApiKey.generate_random_key_for(self)
@@ -104,15 +116,25 @@ class ApiKey(object):
 
     @classmethod
     def get_by_api_key(clz, api_key):
+        cache = current_app.extensions['lfu_cache']
+        cached = cache.get('key.%s' % api_key)
+        if cached:
+            current_app.logger.info("Found key %s in cache: %s", api_key, cached.as_dict())
+            return cached
+
         try:
             res = flask_boto.clients['s3'].get_object(
                 Bucket=current_app.config.get('STORAGE_S3_BUCKET'),
                 Key=posixpath.join(current_app.config.get('STORAGE_S3_PREFIX'), 'keys', api_key),
             )
             data = json.loads(res['Body'].read().decode('utf8'))
-            return clz.from_dict(data)
+            obj = clz.from_dict(data)
+            cache['key.%s' % api_key] = obj
+            current_app.logger.info("Stored key %s in cache", api_key)
+            return obj
 
         except flask_boto.clients['s3'].exceptions.NoSuchKey:
+            cache['key.%s' % api_key] = None
             return None
 
     @classmethod
@@ -144,12 +166,16 @@ class ApiKey(object):
             Body=data,
             ContentType='application/json',
         )
+        cache = current_app.extensions['lfu_cache']
+        cache.pop('key.%s' % self.api_key, None)
 
     def delete(self):
         flask_boto.clients['s3'].delete_object(
             Bucket=current_app.config.get('STORAGE_S3_BUCKET'),
             Key=posixpath.join(current_app.config.get('STORAGE_S3_PREFIX'), 'keys', self.api_key),
         )
+        cache = current_app.extensions['lfu_cache']
+        cache.pop('key.%s' % self.api_key, None)
 
     def is_origin_allowed(self, origin):
         if not self.allowed_origins:

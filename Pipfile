@@ -15,6 +15,7 @@ flask-login = "*"
 flask-wtf = "*"
 rauth = "*"
 raven = {extras = ["flask"]}
+cachetools = "*"
 
 
 [dev-packages]

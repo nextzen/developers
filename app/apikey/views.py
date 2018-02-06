@@ -72,6 +72,7 @@ def validate_allowed_origins(origins):
 @login_required
 def show(apikey):
     k = ApiKey.get_by_api_key(apikey)
+    current_app.logger.info("Showing key %s", k.as_dict())
 
     if not k:
         return redirect(url_for('apikey.mine'))
