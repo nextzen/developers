@@ -136,8 +136,15 @@ class GithubSignIn(OAuthSignIn):
                   'redirect_uri': self.get_callback_url()},
         )
         me = oauth_session.get('user').json()
+
+        email = me.get('email')
+        if not email:
+            me_emails = oauth_session.get('user/emails').json()
+            email = next(iter(me_emails))
+            email = email.get('email')
+
         return (
             'github$%s' % me['id'],
             me.get('name'),
-            me.get('email'),
+            email,
         )

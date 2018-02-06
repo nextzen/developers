@@ -54,7 +54,7 @@ class User(UserMixin):
             return obj
 
         except flask_boto.clients['s3'].exceptions.NoSuchKey:
-            cache.set(user_id, None)
+            cache[user_id] = None
             return None
 
     @classmethod
