@@ -7,6 +7,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgresql://localhost/apikeys')
     DEBUG = os.environ.get('FLASK_DEBUG', False)
     PREFERRED_URL_SCHEME = 'https'
+    SLACK_WEBHOOK_URL = os.environ.get('SLACK_WEBHOOK_URL')
 
     BOTO3_SERVICES = ['s3']
     STORAGE_S3_BUCKET = os.environ.get('STORAGE_S3_BUCKET')

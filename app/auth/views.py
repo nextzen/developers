@@ -1,4 +1,5 @@
 import datetime
+import requests
 from flask import (
     current_app,
     flash,
@@ -83,6 +84,14 @@ def oauth_callback(provider):
         user.save()
 
         flash("Thanks for signing up! You can create your first API key below.", 'success')
+
+        if current_app.config.get('SLACK_WEBHOOK_URL'):
+            try:
+                webhook_url = current_app.config.get('SLACK_WEBHOOK_URL')
+                resp = requests.post(webhook_url, json={"text": "New user `%s` (`%s`) joined!" % (social_id, email)})
+                resp.raise_for_status()
+            except:
+                current_app.logger.exception("Coudln't post to slack for some reason")
     login_user(user, True)
 
     return redirect(url_for('apikey.mine'))
