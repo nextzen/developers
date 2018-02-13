@@ -6,7 +6,7 @@
     <h3>About</h3>
     <p>We're proud to offer long-term support for the maps, basemap designs, and the vector and terrain
        tile data that have powered Mapzen's cartography. To enjoy the maps into the future, past Mapzen's
-       early 2018 shutdown, you'll need to make a few updates to your projects.</p>
+       early 2018 shutdown, you&rsquo;ll need to <a href="https://developers.nextzen.org/">sign up for a Nextzen API key</a> today, and make a few updates to your projects.</p>
     
     <p>Generally speaking you'll need to swap <code>mapzen.com</code> for <code>nextzen.org</code>, and include the <code>www</code> subdomain in URL paths.
 
@@ -44,6 +44,35 @@
       <li><code>https://www.nextzen.org/carto/walkabout-style/7/walkabout-style.zip</code></li>
       <li><code>https://www.nextzen.org/carto/sdk-default-style/1.1/sdk-default-style.zip</code></li>
     </ul>
+  
+      <h4>Using Nextzen tiles with earlier basemap versions</h4>
+
+  <p>If you need to keep a basemap pegged at an earlier version it's possible to mix and match tile sources and basemap versions. Below we import the last major version of the Bubble Wrap style pre-Mapzen shutdown but source map data from Nextzen's tile endpoint and specify a new API key. The example is given in Tangram JS and Leaflet syntax:</p>
+    
+    <pre>
+    var layer = Tangram.leafletLayer({
+            scene: {
+                import: [
+                    'https://www.nextzen.org/carto/bubble-wrap-style/8/bubble-wrap-style.zip',
+                    'https://www.nextzen.org/carto/bubble-wrap-style/8/themes/label-10.zip'
+                ],
+                sources: {
+                    mapzen: {
+                        url: 'https://{s}.tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt',
+                        url_subdomains: ['a', 'b', 'c', 'd'],
+                        url_params: {
+                            api_key: 'your-nextzen-api-key'
+                        },
+                        tile_size: 512,
+                        max_zoom: 16
+                    }
+                }
+            },
+            attribution: '&lt;a href="https://mapzen.com/tangram" target="_blank">Tangram&lt;/a&gt; | &lt;a href="http://www.openstreetmap.org/copyright" target="_blank"&gt;&copy; OpenStreetMap contributors&lt;/a&gt; | &lt;a href="https://www.nextzen.com/" target="_blank"&gt;Nextzen&lt;/a&gt;'
+        });
+    </pre>
+
+
     
     <h4>See Also</h4>
 
@@ -55,3 +84,5 @@
 
 <p>Nextzen is after <a href="https://en.wikipedia.org/wiki/Mapzen">Mapzen</a>.</p>
 {% endblock %}
+
+
