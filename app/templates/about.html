@@ -4,10 +4,8 @@
 {{ super() }}
 <div class='page-header'>
     <h3>About</h3>
-    <p>We're proud to offer long-term support for the maps, basemap designs, and the vector and terrain
-       tile data that have powered Mapzen's cartography. To enjoy the maps into the future, past Mapzen's
-       early 2018 shutdown, you&rsquo;ll need to <a href="https://developers.nextzen.org/">sign up for a Nextzen API key</a> today, and make a few updates to your projects.</p>
-    
+    <p>We're proud to offer long-term support for the maps, basemap designs, and the vector and terrain tile data that have powered Mapzen's cartography. To enjoy the maps into the future, past Mapzen's early 2018 shutdown, you'll need to <a href="{{ url_for('apikey.index') }}">sign up for a Nextzen API key</a> today, and make a few updates to your projects.</p>
+
     <p>Generally speaking you'll need to swap <code>mapzen.com</code> for <code>nextzen.org</code>, and include the <code>www</code> subdomain in URL paths.
 
     <h4>Vector Tile Endpoints</h4>
@@ -18,7 +16,7 @@
       <li><code>https://tile.nextzen.org/tilezen/vector/v1/256/all/{z}/{x}/{y}.mvt?api_key=your-nextzen-api-key</code></li>
       <li><code>https://tile.nextzen.org/tilezen/vector/v1/all/{z}/{x}/{y}.mvt?api_key=your-nextzen-api-key</code></li>
     </ul>
-    
+
     <h4>Terrain Tile Endpoints</h4>
 
     <ul>
@@ -27,7 +25,7 @@
       <li><code>https://tile.nextzen.org/tilezen/terrain/v1/geotiff/{z}/{x}/{y}.tif?api_key=your-nextzen-api-key</code></li>
       <li><code>https://tile.nextzen.org/tilezen/terrain/v1/skadi/{N|S}{y}/{N|S}{y}{E|W}{x}.hgt.gz?api_key=your-nextzen-api-key</code></li>
     </ul>
-    
+
     <h4>Tangram JS Library</h4>
 
     <ul>
@@ -44,11 +42,11 @@
       <li><code>https://www.nextzen.org/carto/walkabout-style/7/walkabout-style.zip</code></li>
       <li><code>https://www.nextzen.org/carto/sdk-default-style/1.1/sdk-default-style.zip</code></li>
     </ul>
-  
-      <h4>Using Nextzen tiles with earlier basemap versions</h4>
 
-  <p>If you need to keep a basemap pegged at an earlier version it's possible to mix and match tile sources and basemap versions. Below we import the last major version of the Bubble Wrap style pre-Mapzen shutdown but source map data from Nextzen's tile endpoint and specify a new API key. The example is given in Tangram JS and Leaflet syntax:</p>
-    
+    <h4>Using Nextzen tiles with earlier basemap versions</h4>
+
+    <p>If you need to keep a basemap pegged at an earlier version it's possible to mix and match tile sources and basemap versions. Below we import the last major version of the Bubble Wrap style pre-Mapzen shutdown but source map data from Nextzen's tile endpoint and specify a new API key. The example is given in Tangram JS and Leaflet syntax:</p>
+
     <pre>
     var layer = Tangram.leafletLayer({
             scene: {
@@ -71,13 +69,13 @@
             attribution: '&lt;a href="https://mapzen.com/tangram" target="_blank">Tangram&lt;/a&gt; | &lt;a href="http://www.openstreetmap.org/copyright" target="_blank"&gt;&copy; OpenStreetMap contributors&lt;/a&gt; | &lt;a href="https://www.nextzen.com/" target="_blank"&gt;Nextzen&lt;/a&gt;'
         });
     </pre>
-    
+
     <h4>See Also</h4>
 
     <ul>
       <li>Read <a href="https://mapzen.com/blog/long-term-support-mapzen-maps/">Long-term support for Mapzen maps, vector &amp; terrain tiles</a> on the Mapzen blog (2018.01.30) and <a href="https://web.archive.org/web/20180130194727/https://mapzen.com/blog/long-term-support-mapzen-maps/">archive.org</a></li>
     </ul>
-    
+
 </div>
 
 <p>Nextzen is after <a href="https://en.wikipedia.org/wiki/Mapzen">Mapzen</a>.</p>
