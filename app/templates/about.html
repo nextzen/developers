@@ -43,6 +43,15 @@
       <li><code>https://www.nextzen.org/carto/sdk-default-style/1.1/sdk-default-style.zip</code></li>
     </ul>
 
+    <h4>TileJSON Endpoints</h4>
+
+    <p>Nextzen Tiles expose <a href="https://github.com/mapbox/tilejson-spec">Tile JSON</a> documents for tools that support them. For example:
+
+    <ul>
+      <li><code>https://tile.nextzen.org/tilezen/vector/v1/all/tilejson.mvt.json</code></li>
+      <li><code>https://tile.nextzen.org/tilezen/vector/v1/512/all/tilejson.geojson.json</code></li>
+    </ul>
+
     <h4>Using Nextzen tiles with earlier basemap versions</h4>
 
     <p>If you need to keep a basemap pegged at an earlier version it's possible to mix and match tile sources and basemap versions. Below we import the last major version of the Bubble Wrap style pre-Mapzen shutdown but source map data from Nextzen's tile endpoint and specify a new API key. The example is given in Tangram JS and Leaflet syntax:</p>
