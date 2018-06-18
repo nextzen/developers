@@ -65,12 +65,12 @@ exports.handler = (event, context, callback) => {
 
             console.log(`Set key ${verify_querystring} to ${JSON.stringify(response.data)}`);
 
-            return request;
+            return callback(null, request);
         })
         .catch(function (error) {
             if (error.code === 'ECONNABORTED') {
                 console.log('Timed out waiting for API key check');
-                return request;
+                return callback(null, request);
             } else if (error.response.status == 400) {
                 console.log(`Received verify response ${JSON.stringify(error.response.data)}`);
                 lru.set(verify_querystring, error.response.data, ONE_HOUR);
@@ -81,6 +81,7 @@ exports.handler = (event, context, callback) => {
                 });
             } else {
                 console.log(error);
+                return callback(null, request);
             }
         });
 };
