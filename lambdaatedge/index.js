@@ -49,7 +49,12 @@ exports.handler = (event, context, callback) => {
             response = {
                 status: '400',
                 statusDescription: 'Invalid API Key',
-                body: cached_response.message
+                body: cached_response.message,
+                headers: {
+                    "access-control-allow-origin": [
+                        {"key": "Access-Control-Allow-Origin", "value": "*"},
+                    ],
+                }
             };
         }
         return callback(null, response);
@@ -59,11 +64,11 @@ exports.handler = (event, context, callback) => {
 
     axios.get(verify_url, {timeout: 750})
         .then(function (response) {
-            console.log(`Received verify response ${JSON.stringify(response.data)}`);
+            console.log(`Received verify response ` + JSON.stringify(response.data));
 
             lru.set(verify_querystring, response.data, ONE_HOUR);
 
-            console.log(`Set key ${verify_querystring} to ${JSON.stringify(response.data)}`);
+            console.log(`Set key ${verify_querystring} to ` + JSON.stringify(response.data));
 
             return callback(null, request);
         })
@@ -72,12 +77,17 @@ exports.handler = (event, context, callback) => {
                 console.log('Timed out waiting for API key check');
                 return callback(null, request);
             } else if (error.response.status == 400) {
-                console.log(`Received verify response ${JSON.stringify(error.response.data)}`);
+                console.log(`Received verify response ` + JSON.stringify(error.response.data));
                 lru.set(verify_querystring, error.response.data, ONE_HOUR);
                 return callback(null, {
                     status: '400',
                     statusDescription: 'Invalid API Key',
-                    body: error.response.data.message
+                    body: error.response.data.message,
+                    headers: {
+                        "access-control-allow-origin": [
+                            {"key": "Access-Control-Allow-Origin", "value": "*"},
+                        ],
+                    }
                 });
             } else {
                 console.log(error);
