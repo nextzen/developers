@@ -13,6 +13,7 @@ rauth = "*"
 raven = {extras = ["flask"]}
 cachetools = "*"
 "boto3" = "*"
+blinker = "*"
 
 [dev-packages]
 zappa = "*"

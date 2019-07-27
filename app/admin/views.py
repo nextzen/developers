@@ -84,7 +84,7 @@ def show_key(apikey):
         elif request.form.get('action') == 'admin_lock':
             k.admin_locked = True
             k.admin_lock_user = current_user.get_id()
-            k.admin_lock_reason = request.form.get('lock_reason')
+            k.admin_lock_reason = request.form.get('user_lock_reason')
             k.admin_lock_at = datetime.datetime.utcnow()
             k.save()
             u.api_keys[k.api_key] = k.as_dict()
@@ -136,5 +136,73 @@ def show_user(userid):
     if not u:
         flash("That user doesn't exist.")
         return redirect(url_for('admin.index'))
+
+    if request.method == 'POST':
+        if request.form.get('action') == 'admin_lock':
+            u.admin_locked = True
+            u.admin_lock_user = current_user.get_id()
+            u.admin_lock_reason = request.form.get('user_lock_reason')
+            u.admin_lock_at = datetime.datetime.utcnow()
+            u.save()
+
+            flash("This user's account has been locked. They will not be able to create any API keys.")
+
+        elif request.form.get('action') == 'admin_unlock':
+            u.admin_locked = False
+            u.admin_lock_at = None
+            u.admin_lock_reason = None
+            u.admin_lock_user = None
+            u.save()
+
+            flash("This user's account has been unlocked. They will now be able to create API keys.")
+
+        elif request.form.get('action') == 'disable_keys':
+            for api_key in u.api_keys.values():
+                k = ApiKey.from_dict(api_key)
+                k.enabled = False
+                k.save()
+                u.api_keys[k.api_key] = k.as_dict()
+            u.save()
+
+            flash("This user's API keys were all disabled and will stop allowing requests after a few minutes.")
+
+        elif request.form.get('action') == 'enable_keys':
+            for api_key in u.api_keys.values():
+                k = ApiKey.from_dict(api_key)
+                k.enabled = True
+                k.save()
+                u.api_keys[k.api_key] = k.as_dict()
+            u.save()
+
+            flash("This user's API keys were all enabled and will start allowing requests after a few minutes.")
+
+        elif request.form.get('action') == 'lock_keys':
+            now = datetime.datetime.utcnow()
+            for api_key in u.api_keys.values():
+                k = ApiKey.from_dict(api_key)
+                k.admin_locked = True
+                k.admin_lock_user = current_user.get_id()
+                k.admin_lock_reason = request.form.get('key_lock_reason')
+                k.admin_lock_at = now
+                k.save()
+                u.api_keys[k.api_key] = k.as_dict()
+            u.save()
+
+            flash("This user's API keys were all locked. The user will not be able to enable them if they are disabled.")
+
+        elif request.form.get('action') == 'unlock_keys':
+            for api_key in u.api_keys.values():
+                k = ApiKey.from_dict(api_key)
+                k.admin_locked = False
+                k.admin_lock_at = None
+                k.admin_lock_reason = None
+                k.admin_lock_user = None
+                k.save()
+                u.api_keys[k.api_key] = k.as_dict()
+            u.save()
+
+            flash("This user's API key were all unlocked. The user will now be able to re-enable them if they are disabled.")
+
+        return redirect(url_for('admin.show_user', userid=userid))
 
     return render_template('admin/show_user.html', user=u)
