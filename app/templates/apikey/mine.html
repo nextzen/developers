@@ -59,7 +59,7 @@
       <dt>Status</dt>
       <dd>
           {% if key.enabled %}<span class="label label-success">Enabled</span>{% else %}<span class="label label-warning">Disabled</span>{% endif %}
-          {% if key.admin_locked %}<span class="label label-error">Admin Locked</span>{% endif %}
+          {% if key.admin_locked %}<span class="label label-danger">Admin Locked</span>{% endif %}
       </dd>
     </dl>
     <dl class="dl-horizontal">
@@ -77,8 +77,12 @@
 <div class="alert alert-info" role="alert">You have no API keys.</div>
 {% endfor %}
 
+{% if current_user.admin_locked %}
+<p>⚠️ Your account has been locked by an administrator, so you cannot create more API keys. Please <a href="mailto:hello@nextzen.org">contact us</a> if you have questions.</p>
+{% else %}
 <form method="POST" action="{{ url_for('apikey.create') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <button class="btn btn-default" type="submit">Create a new API key</button>
 </form>
+{% endif %}
 {% endblock %}

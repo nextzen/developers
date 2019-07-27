@@ -50,6 +50,10 @@ def mine():
 @keys_bp.route('/keys/create', methods=['POST'])
 @login_required
 def create():
+    if current_user.admin_locked:
+        flash("You cannot create a new API key because your account was locked by an admin.")
+        return redirect(url_for('apikey.mine'))
+
     k = current_user.generate_random_key()
     k.save()
     current_user.save()

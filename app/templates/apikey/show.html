@@ -52,16 +52,16 @@
   <div class="form-group">
     <div class="panel panel-default">
       <div class="panel-body">
-  {% if key.enabled %}
+      {% if key.enabled %}
         <p class="help-block">Disabling your API key will block requests made using this API key. Due to caching, changes made may take several hours to take effect. You must disable an API key before deleting it.</p>
         <button class="btn btn-warning" type="submit" name="action" value="disable">Disable</button>
-  {% else %}
+      {% else %}
         {% if key.admin_locked %}
         <p class="help-block">You cannot enable this API key because an administrator has locked it. Please <a href="mailto:hello@nextzen.org">contact us</a> if you have questions.</p>
         {% else %}
         <p class="help-block">Enabling your API key will allow requests made using this API key. Due to caching, changes made may take several hours to take effect.</p>
         <button class="btn btn-warning" type="submit" name="action" value="enable">Enable</button>
-        {% endif %}
+      {% endif %}
       </div>
     </div>
   </div>

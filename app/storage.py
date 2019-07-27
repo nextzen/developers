@@ -35,12 +35,16 @@ def load_user(id):
 
 
 class User(UserMixin):
-    def __init__(self, email, social_id, created_at, api_keys=None):
+    def __init__(self, email, social_id, created_at, api_keys=None, **kwargs):
         self.email = email
         self.social_id = social_id
         self.user_id = hash_base64(self.social_id)
         self.api_keys = api_keys or {}
         self.created_at = created_at
+        self.admin_locked = kwargs.get('admin_locked') == True
+        self.admin_lock_user = kwargs.get('admin_lock_user')
+        self.admin_lock_reason = kwargs.get('admin_lock_reason')
+        self.admin_lock_at = kwargs.get('admin_lock_at')
 
     def get_id(self):
         return self.user_id
@@ -82,6 +86,10 @@ class User(UserMixin):
             social_id=data['social_id'],
             created_at=datetime.datetime.utcfromtimestamp(data['created_at'] / 1000),
             api_keys=data.get('api_keys', {}),
+            admin_locked=data.get('admin_locked'),
+            admin_lock_user=data.get('admin_lock_user'),
+            admin_lock_reason=data.get('admin_lock_reason'),
+            admin_lock_at=datetime.datetime.utcfromtimestamp(data.get('admin_lock_at') / 1000) if data.get('admin_lock_at') else None,
         )
 
     @property
@@ -97,6 +105,10 @@ class User(UserMixin):
             "social_id": self.social_id,
             "created_at": int(self.created_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000),
             "api_keys": self.api_keys,
+            "admin_locked": self.admin_locked,
+            "admin_lock_user": self.admin_lock_user,
+            "admin_lock_reason": self.admin_lock_reason,
+            "admin_lock_at": int(self.admin_lock_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000) if self.admin_lock_at else None,
         }
 
     def save(self):
@@ -184,13 +196,13 @@ class ApiKey(object):
             "person_id": self.person_id,
             "api_key": self.api_key,
             "enabled": self.enabled,
+            "name": self.name,
+            "allowed_origins": self.allowed_origins,
+            "created_at": int(self.created_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000),
             "admin_locked": self.admin_locked,
             "admin_lock_user": self.admin_lock_user,
             "admin_lock_reason": self.admin_lock_reason,
             "admin_lock_at": int(self.admin_lock_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000) if self.admin_lock_at else None,
-            "name": self.name,
-            "allowed_origins": self.allowed_origins,
-            "created_at": int(self.created_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000),
         }
 
     def save(self):
