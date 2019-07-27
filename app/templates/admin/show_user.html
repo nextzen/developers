@@ -31,31 +31,31 @@
 
 <p>GitHub User <a href="https://api.github.com/user/{{ user.github_id }}">{{ user.github_id }}</a> created this account at <time datetime="{{ user.created_at | nice_datetime }}" data-format="MMMM D, YYYY h:mm A">{{ user.created_at | nice_datetime }}</time>.</p></p>
 
-<div class="form-group">
-  <div class="panel panel-danger">
-    <div class="panel-heading">
-      <h3 class="panel-title">Lock This User</h3>
-    </div>
-    <div class="panel-body">
-    {% if user.admin_locked %}
-      <p class="help-block">This user was locked at <time datetime="{{ user.admin_lock_at | nice_datetime }}" data-format="MMMM D, YYYY h:mm A">{{ user.admin_lock_at | nice_datetime }}</time> by user <a href="{{ url_for('admin.show_user', userid=user.admin_lock_user) }}"><strong>{{ user.admin_lock_user }}</strong></a>, who gave the reason: <em>{{ user.admin_lock_reason }}</em>. Please check with other admins before unlocking it.</p>
-      <button class="btn btn-danger" type="submit" name="action" value="admin_unlock">Unlock</button>
-    {% else %}
-      <p class="help-block">Locking is an action that can only be taken by an administrator. A locked user cannot create new API keys. They can still make changes to existing keys, though. Note that this will not disable any of the user's keys.</p>
-      <div class="form-group">
-        <label for="lock-reason">Reason</label>
-        <input type="text" class="form-control" id="lock-reason" name="user_lock_reason" placeholder="Enter a brief reason for the lock">
+<form method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <div class="form-group">
+    <div class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title">Lock This User</h3>
       </div>
-      <button class="btn btn-danger" type="submit" name="action" value="admin_lock">Lock</button>
-    {% endif %}
+      <div class="panel-body">
+      {% if user.admin_locked %}
+        <p class="help-block">This user was locked at <time datetime="{{ user.admin_lock_at | nice_datetime }}" data-format="MMMM D, YYYY h:mm A">{{ user.admin_lock_at | nice_datetime }}</time> by user <a href="{{ url_for('admin.show_user', userid=user.admin_lock_user) }}"><strong>{{ user.admin_lock_user }}</strong></a>, who gave the reason: <em>{{ user.admin_lock_reason }}</em>. Please check with other admins before unlocking it.</p>
+        <button class="btn btn-danger" type="submit" name="action" value="admin_unlock">Unlock</button>
+      {% else %}
+        <p class="help-block">Locking is an action that can only be taken by an administrator. A locked user cannot create new API keys. They can still make changes to existing keys, though. Note that this will not disable any of the user's keys.</p>
+        <div class="form-group">
+          <label for="lock-reason">Reason</label>
+          <input type="text" class="form-control" id="lock-reason" name="user_lock_reason" placeholder="Enter a brief reason for the lock">
+        </div>
+        <button class="btn btn-danger" type="submit" name="action" value="admin_lock">Lock</button>
+      {% endif %}
+      </div>
     </div>
   </div>
-</div>
 
 <h4>User's API Keys</h4>
 
-<form method="POST">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
   <div class="form-group">
     <div class="panel panel-warning">
       <div class="panel-heading">
