@@ -19,6 +19,16 @@ def key_generator():
     return base64.urlsafe_b64encode(uuid.uuid4().bytes).decode('utf8').strip("=")
 
 
+def validate_allowed_origins(origins):
+    origins = origins.strip()
+    origins = origins.splitlines()
+    for origin in origins:
+        origin = urlparse(origin)
+        if not origin.netloc or origin.scheme not in ('http', 'https'):
+            return False
+    return True
+
+
 @login_manager.user_loader
 def load_user(id):
     return User.get_by_user_id(id)
@@ -74,11 +84,18 @@ class User(UserMixin):
             api_keys=data.get('api_keys', {}),
         )
 
+    @property
+    def github_id(self):
+        if self.social_id.startswith('github$'):
+            return int(self.social_id[7:])
+        else:
+            return None
+
     def as_dict(self):
         return {
             "email": self.email,
             "social_id": self.social_id,
-            "created_at": int(self.created_at.timestamp() * 1000),
+            "created_at": int(self.created_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000),
             "api_keys": self.api_keys,
         }
 
@@ -101,13 +118,17 @@ class User(UserMixin):
 
 
 class ApiKey(object):
-    def __init__(self, person_id, api_key, enabled, name=None, allowed_origins=None, created_at=None):
+    def __init__(self, person_id, api_key, enabled, name=None, allowed_origins=None, created_at=None, **kwargs):
         self.created_at = created_at
         self.person_id = person_id
         self.api_key = api_key
         self.name = name
         self.allowed_origins = allowed_origins
         self.enabled = enabled
+        self.admin_locked = kwargs.get('admin_locked') == True
+        self.admin_lock_user = kwargs.get('admin_lock_user')
+        self.admin_lock_reason = kwargs.get('admin_lock_reason')
+        self.admin_lock_at = kwargs.get('admin_lock_at')
 
     @classmethod
     def generate_random_key_for(clz, user):
@@ -152,6 +173,10 @@ class ApiKey(object):
             name=data['name'],
             allowed_origins=data.get('allowed_origins'),
             created_at=datetime.datetime.utcfromtimestamp(data['created_at'] / 1000),
+            admin_locked=data.get('admin_locked'),
+            admin_lock_user=data.get('admin_lock_user'),
+            admin_lock_reason=data.get('admin_lock_reason'),
+            admin_lock_at=datetime.datetime.utcfromtimestamp(data.get('admin_lock_at') / 1000) if data.get('admin_lock_at') else None,
         )
 
     def as_dict(self):
@@ -159,9 +184,13 @@ class ApiKey(object):
             "person_id": self.person_id,
             "api_key": self.api_key,
             "enabled": self.enabled,
+            "admin_locked": self.admin_locked,
+            "admin_lock_user": self.admin_lock_user,
+            "admin_lock_reason": self.admin_lock_reason,
+            "admin_lock_at": int(self.admin_lock_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000) if self.admin_lock_at else None,
             "name": self.name,
             "allowed_origins": self.allowed_origins,
-            "created_at": int(self.created_at.timestamp() * 1000),
+            "created_at": int(self.created_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000),
         }
 
     def save(self):

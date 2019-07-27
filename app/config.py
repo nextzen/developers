@@ -30,6 +30,8 @@ class Config:
         },
     }
 
+    ADMIN_WHITELIST = os.environ.get('ADMIN_WHITELIST', '').split(',')
+
     @staticmethod
     def init_app(app):
         pass

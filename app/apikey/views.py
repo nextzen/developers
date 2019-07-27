@@ -16,7 +16,7 @@ from flask import (
 from flask_login import current_user, login_required
 from six.moves.urllib.parse import urlparse
 from . import keys_bp
-from ..storage import ApiKey
+from ..storage import ApiKey, validate_allowed_origins
 
 
 @keys_bp.route('/robots.txt')
@@ -56,16 +56,6 @@ def create():
     flash('You created a new API key!', 'success')
 
     return redirect(url_for('apikey.show', apikey=k.api_key))
-
-
-def validate_allowed_origins(origins):
-    origins = origins.strip()
-    origins = origins.splitlines()
-    for origin in origins:
-        origin = urlparse(origin)
-        if not origin.netloc or origin.scheme not in ('http', 'https'):
-            return False
-    return True
 
 
 @keys_bp.route('/keys/<apikey>', methods=['GET', 'POST'])
