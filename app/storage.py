@@ -1,4 +1,5 @@
 import base64
+import boto3
 import datetime
 import fnmatch
 import hashlib
@@ -6,7 +7,7 @@ import posixpath
 import uuid
 from flask import current_app, json
 from flask_login import UserMixin
-from . import flask_boto, login_manager
+from . import login_manager
 
 
 def hash_base64(text):
@@ -16,6 +17,16 @@ def hash_base64(text):
 
 def key_generator():
     return base64.urlsafe_b64encode(uuid.uuid4().bytes).decode('utf8').strip("=")
+
+
+def validate_allowed_origins(origins):
+    origins = origins.strip()
+    origins = origins.splitlines()
+    for origin in origins:
+        origin = urlparse(origin)
+        if not origin.netloc or origin.scheme not in ('http', 'https'):
+            return False
+    return True
 
 
 @login_manager.user_loader
@@ -39,21 +50,23 @@ class User(UserMixin):
         cache = current_app.extensions['lfu_cache']
         cached = cache.get('user.%s' % user_id)
         if cached:
-            current_app.logger.info("Found user %s in cache: %s", user_id, cached.as_dict())
+            current_app.logger.debug("Found user %s in cache: %s", user_id, cached.as_dict())
             return cached
 
+        s3 = boto3.client('s3')
+
         try:
-            res = flask_boto.clients['s3'].get_object(
+            res = s3.get_object(
                 Bucket=current_app.config.get('STORAGE_S3_BUCKET'),
                 Key=posixpath.join(current_app.config.get('STORAGE_S3_PREFIX'), 'users', user_id),
             )
             data = json.loads(res['Body'].read().decode('utf8'))
             obj = clz.from_dict(data)
             cache['user.%s' % user_id] = obj
-            current_app.logger.info("Stored user %s in cache", user_id)
+            current_app.logger.debug("Stored user %s in cache", user_id)
             return obj
 
-        except flask_boto.clients['s3'].exceptions.NoSuchKey:
+        except s3.exceptions.NoSuchKey:
             cache[user_id] = None
             return None
 
@@ -71,17 +84,25 @@ class User(UserMixin):
             api_keys=data.get('api_keys', {}),
         )
 
+    @property
+    def github_id(self):
+        if self.social_id.startswith('github$'):
+            return int(self.social_id[7:])
+        else:
+            return None
+
     def as_dict(self):
         return {
             "email": self.email,
             "social_id": self.social_id,
-            "created_at": int(self.created_at.timestamp() * 1000),
+            "created_at": int(self.created_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000),
             "api_keys": self.api_keys,
         }
 
     def save(self):
+        s3 = boto3.client('s3')
         data = json.dumps(self.as_dict())
-        flask_boto.clients['s3'].put_object(
+        s3.put_object(
             Bucket=current_app.config.get('STORAGE_S3_BUCKET'),
             Key=posixpath.join(current_app.config.get('STORAGE_S3_PREFIX'), 'users', self.user_id),
             Body=data,
@@ -97,13 +118,17 @@ class User(UserMixin):
 
 
 class ApiKey(object):
-    def __init__(self, person_id, api_key, enabled, name=None, allowed_origins=None, created_at=None):
+    def __init__(self, person_id, api_key, enabled, name=None, allowed_origins=None, created_at=None, **kwargs):
         self.created_at = created_at
         self.person_id = person_id
         self.api_key = api_key
         self.name = name
         self.allowed_origins = allowed_origins
         self.enabled = enabled
+        self.admin_locked = kwargs.get('admin_locked') == True
+        self.admin_lock_user = kwargs.get('admin_lock_user')
+        self.admin_lock_reason = kwargs.get('admin_lock_reason')
+        self.admin_lock_at = kwargs.get('admin_lock_at')
 
     @classmethod
     def generate_random_key_for(clz, user):
@@ -119,21 +144,23 @@ class ApiKey(object):
         cache = current_app.extensions['lfu_cache']
         cached = cache.get('key.%s' % api_key)
         if cached:
-            current_app.logger.info("Found key %s in cache: %s", api_key, cached.as_dict())
+            current_app.logger.debug("Found key %s in cache: %s", api_key, cached.as_dict())
             return cached
 
+        s3 = boto3.client('s3')
+
         try:
-            res = flask_boto.clients['s3'].get_object(
+            res = s3.get_object(
                 Bucket=current_app.config.get('STORAGE_S3_BUCKET'),
                 Key=posixpath.join(current_app.config.get('STORAGE_S3_PREFIX'), 'keys', api_key),
             )
             data = json.loads(res['Body'].read().decode('utf8'))
             obj = clz.from_dict(data)
             cache['key.%s' % api_key] = obj
-            current_app.logger.info("Stored key %s in cache", api_key)
+            current_app.logger.debug("Stored key %s in cache", api_key)
             return obj
 
-        except flask_boto.clients['s3'].exceptions.NoSuchKey:
+        except s3.exceptions.NoSuchKey:
             cache['key.%s' % api_key] = None
             return None
 
@@ -146,6 +173,10 @@ class ApiKey(object):
             name=data['name'],
             allowed_origins=data.get('allowed_origins'),
             created_at=datetime.datetime.utcfromtimestamp(data['created_at'] / 1000),
+            admin_locked=data.get('admin_locked'),
+            admin_lock_user=data.get('admin_lock_user'),
+            admin_lock_reason=data.get('admin_lock_reason'),
+            admin_lock_at=datetime.datetime.utcfromtimestamp(data.get('admin_lock_at') / 1000) if data.get('admin_lock_at') else None,
         )
 
     def as_dict(self):
@@ -153,14 +184,19 @@ class ApiKey(object):
             "person_id": self.person_id,
             "api_key": self.api_key,
             "enabled": self.enabled,
+            "admin_locked": self.admin_locked,
+            "admin_lock_user": self.admin_lock_user,
+            "admin_lock_reason": self.admin_lock_reason,
+            "admin_lock_at": int(self.admin_lock_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000) if self.admin_lock_at else None,
             "name": self.name,
             "allowed_origins": self.allowed_origins,
-            "created_at": int(self.created_at.timestamp() * 1000),
+            "created_at": int(self.created_at.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000),
         }
 
     def save(self):
+        s3 = boto3.client('s3')
         data = json.dumps(self.as_dict())
-        flask_boto.clients['s3'].put_object(
+        s3.put_object(
             Bucket=current_app.config.get('STORAGE_S3_BUCKET'),
             Key=posixpath.join(current_app.config.get('STORAGE_S3_PREFIX'), 'keys', self.api_key),
             Body=data,
@@ -170,7 +206,8 @@ class ApiKey(object):
         cache.pop('key.%s' % self.api_key, None)
 
     def delete(self):
-        flask_boto.clients['s3'].delete_object(
+        s3 = boto3.client('s3')
+        s3.delete_object(
             Bucket=current_app.config.get('STORAGE_S3_BUCKET'),
             Key=posixpath.join(current_app.config.get('STORAGE_S3_PREFIX'), 'keys', self.api_key),
         )

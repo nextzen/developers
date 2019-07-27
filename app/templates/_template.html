@@ -78,6 +78,9 @@ body {
             {% if current_user.is_anonymous %}
             <li role="presentation"><a href="{{ url_for('auth.login') }}">Login</a></li>
             {% else %}
+            {% if current_user.social_id in config.get('ADMIN_WHITELIST') %}
+            <li role="presentation"><a href="{{ url_for('admin.index') }}">Admin</a></li>
+            {% endif %}
             <li role="presentation">
                 <form id="logout_form" method="POST" action="{{ url_for('auth.logout') }}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>

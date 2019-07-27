@@ -1,0 +1,82 @@
+{% extends "_template.html" %}
+
+{% block title %}Nextzen Developers - API Key Admin For {{ key.api_key }}{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment-with-locales.min.js"></script>
+<script type="text/javascript">
+  $(function () {
+    $("time[data-format]").each(function () {
+      var el = $(this);
+      var dt = moment(el.attr("datetime"));
+      el.text(dt.format(el.data("format")));
+    });
+  })
+</script>
+{% endblock %}
+
+{% block container %}
+{{ super() }}
+
+{%- with messages = get_flashed_messages(with_categories=True) %}
+{%- if messages %}
+<div class="row">
+  {{utils.flashed_messages(messages)}}
+</div>
+{%- endif %}
+{%- endwith %}
+
+<h3>Edit API Key {{ key.api_key }}</h3>
+
+<p>Created by user <code><a href="{{ url_for('admin.show_user', userid=user.get_id()) }}">{{ user.email or user.get_id() }}</a></code> at <time datetime="{{ key.created_at | nice_datetime }}" data-format="MMMM D, YYYY h:mm A">{{ key.created_at | nice_datetime }}</time>.</p>
+
+<form method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <div class="form-group">
+    <label for="apikey-note">Name</label>
+    <input type="text" class="form-control" id="apikey-note" name="name" value="{{ key.name or '' }}">
+  </div>
+  <div class="form-group">
+    <label for="apikey-origins">Allowed Origins</label>
+    <textarea class="form-control" id="apikey-origins" name="allowed_origins" placeholder="https://example.com">{{ '\n'.join(key.allowed_origins) if key.allowed_origins else '' }}</textarea>
+    <p class="help-block">Specify one URL per line. If set, this API key will only allow tile requests that have an <code>Origin</code> header set to one of these URLs.</p>
+  </div>
+  <div class="form-group">
+    <button class="btn btn-primary" type="submit" name="action" value="save">Save Changes</button>
+  </div>
+  <div class="form-group">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        {% if key.enabled %}
+        <p class="help-block">Disabling the API key will block requests made using this API key. Due to caching, changes made may take several hours to take effect. You must disable an API key before deleting it.</p>
+        <button class="btn btn-warning" type="submit" name="action" value="disable">Disable</button>
+        {% else %}
+        <p class="help-block">Enabling your API key will allow requests made using this API key. Due to caching, changes made may take several hours to take effect.</p>
+        <button class="btn btn-warning" type="submit" name="action" value="enable">Enable</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+      <div class="panel panel-default">
+        <div class="panel-body">
+        {% if key.admin_locked %}
+        <p class="help-block">This key was locked at <time datetime="{{ key.admin_lock_at | nice_datetime }}" data-format="MMMM D, YYYY h:mm A">{{ key.admin_lock_at | nice_datetime }}</time> by user <a href="{{ url_for('admin.show_user', userid=key.admin_lock_user) }}"><strong>{{ key.admin_lock_user }}</strong></a>, who gave the reason: <em>{{ key.admin_lock_reason }}</em>. Please check with other admins before unlocking it.</p>
+        <button class="btn btn-danger" type="submit" name="action" value="admin_unlock">Unlock</button>
+        {% else %}
+        <p class="help-block">Locking is an action that can only be taken by an administrator. A user cannot enable a locked API key. They can still make changes to it, though. Note that this will not disable the key.</p>
+        <div class="form-group">
+          <label for="lock-reason">Reason</label>
+          <input type="text" class="form-control" id="lock-reason" name="lock_reason" placeholder="Enter a brief reason for the lock">
+        </div>
+        <button class="btn btn-danger" type="submit" name="action" value="admin_lock">Lock</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</form>
+
+{% endblock %}

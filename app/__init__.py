@@ -10,7 +10,6 @@ from flask import (
 from cachetools import LFUCache
 from flask_bootstrap import Bootstrap
 from flask_caching import Cache
-from flask_boto3 import Boto3
 from flask_login import LoginManager, logout_user, current_user
 from flask_wtf.csrf import CSRFProtect
 from .config import config
@@ -20,7 +19,6 @@ import sys
 csrf = CSRFProtect()
 bootstrap = Bootstrap()
 cache = Cache()
-flask_boto = Boto3()
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -36,7 +34,6 @@ def create_app(config_name):
     csrf.init_app(app)
     bootstrap.init_app(app)
     login_manager.init_app(app)
-    flask_boto.init_app(app)
 
     if app.config.get('SSLIFY_ENABLE'):
         app.logger.info("Using SSLify")
@@ -108,5 +105,8 @@ def create_app(config_name):
 
     from .auth import auth_bp
     app.register_blueprint(auth_bp)
+
+    from .admin import admin_bp
+    app.register_blueprint(admin_bp)
 
     return app

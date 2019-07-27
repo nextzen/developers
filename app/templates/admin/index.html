@@ -1,0 +1,31 @@
+{% extends "_template.html" %}
+
+{% block title %}Nextzen Developers - Admin{% endblock %}
+
+{% block container %}
+{{ super() }}
+<div class='page-header'>
+    <h3>API Key Admin</h3>
+</div>
+
+{%- with messages = get_flashed_messages(with_categories=True) %}
+{%- if messages %}
+<div class="row">
+  {{utils.flashed_messages(messages)}}
+</div>
+{%- endif %}
+{%- endwith %}
+
+<h4>View API Key</h4>
+
+<form method="POST" action="{{ url_for('admin.get_by_key') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class="form-group">
+        <label for="apikey-search">API Key</label>
+        <input type="text" class="form-control" id="apikey-search" name="key">
+        <p class="help-block">Enter an API key to view details for.</p>
+    </div>
+    <button class="btn btn-primary" type="submit" name="action" value="search">Search</button>
+</form>
+
+{% endblock %}

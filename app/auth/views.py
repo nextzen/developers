@@ -65,13 +65,20 @@ def oauth_callback(provider):
     if not current_user.is_anonymous:
         return redirect(url_for('apikey.mine'))
 
-    oauth = OAuthSignIn.get_provider(provider)
-    social_id, username, email = oauth.callback()
+    social_id = None
+
+    error = request.args.get('error')
+    if error:
+        desc = request.args.get('error_description')
+        current_app.logger.error("oauth callback failed. Error: %s, Desc: %s", error, desc)
+    else:
+        oauth = OAuthSignIn.get_provider(provider)
+        social_id, username, email = oauth.callback()
 
     if social_id is None:
         flash("For some reason, we couldn't log you in. "
               "Please contact us!", 'error')
-        return redirect(url_for('apikey.login'))
+        return redirect(url_for('auth.login'))
 
     user = User.get_by_social_id(social_id)
     if not user:
