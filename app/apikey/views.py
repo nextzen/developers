@@ -14,7 +14,6 @@ from flask import (
     url_for,
 )
 from flask_login import current_user, login_required
-from six.moves.urllib.parse import urlparse
 from . import keys_bp
 from ..storage import ApiKey, validate_allowed_origins
 

@@ -7,6 +7,7 @@ import posixpath
 import uuid
 from flask import current_app, json
 from flask_login import UserMixin
+from six.moves.urllib.parse import urlparse
 from . import login_manager
 
 
