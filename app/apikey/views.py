@@ -1,20 +1,16 @@
-import datetime
-import random
 from flask import (
-    abort,
     current_app,
-    escape,
     flash,
     jsonify,
     make_response,
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
 from flask_login import current_user, login_required
 from . import keys_bp
+from ..admin.views import current_user_is_admin
 from ..storage import ApiKey, validate_allowed_origins
 
 
@@ -43,7 +39,10 @@ def contact():
 @keys_bp.route('/keys')
 @login_required
 def mine():
-    return render_template('apikey/mine.html')
+    return render_template(
+        'apikey/mine.html',
+        disable_api_key_creation=(not current_user_is_admin() and current_app.config.DISABLE_USER_API_KEY_CREATION),
+    )
 
 
 @keys_bp.route('/keys/create', methods=['POST'])
@@ -51,6 +50,10 @@ def mine():
 def create():
     if current_user.admin_locked:
         flash("You cannot create a new API key because your account was locked by an admin.")
+        return redirect(url_for('apikey.mine'))
+
+    if current_app.config.DISABLE_API_KEY_CREATION and not current_user_is_admin():
+        flash("You cannot create a new API key because the feature is disabled.")
         return redirect(url_for('apikey.mine'))
 
     k = current_user.generate_random_key()

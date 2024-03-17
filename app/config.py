@@ -32,6 +32,11 @@ class Config:
 
     ADMIN_WHITELIST = os.environ.get('ADMIN_WHITELIST', '').split(',')
 
+    # Disable API key creation for everyone but admins
+    DISABLE_USER_API_KEY_CREATION = os.environ.get('DISABLE_USER_API_KEY_CREATION', "false") == "true"
+    # Disable new user signups
+    DISABLE_USER_SIGNUP = os.environ.get('DISABLE_USER_SIGNUP', "false") == "true"
+
     @staticmethod
     def init_app(app):
         pass

@@ -82,6 +82,10 @@ def oauth_callback(provider):
 
     user = User.get_by_social_id(social_id)
     if not user:
+        if current_app.config.get('DISABLE_USER_SIGNUP'):
+            flash("Sorry, new user signups are disabled.", 'error')
+            return redirect(url_for('auth.login'))
+
         user = User(
             email=email,
             social_id=social_id,
@@ -98,7 +102,7 @@ def oauth_callback(provider):
                 resp = requests.post(webhook_url, json={"text": "New user `%s` (`%s`) joined!" % (social_id, email)})
                 resp.raise_for_status()
             except:
-                current_app.logger.exception("Coudln't post to slack for some reason")
+                current_app.logger.exception("Couldn't post to slack for some reason")
     login_user(user, True)
 
     return redirect(url_for('apikey.mine'))
