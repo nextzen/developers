@@ -16,6 +16,13 @@
 {%- endif %}
 {%- endwith %}
 
+<h4>Configuration</h4>
+
+<p>These settings are currently configured via environment variables at deploy time.</p>
+
+<p>New User Signup is currently: <strong>{% if config.DISABLE_USER_SIGNUP %}⚠️ disabled{% else %}✅ enabled{% endif %}</strong>.</p>
+<p>API Key Creation is currently: <strong>{% if config.DISABLE_USER_API_KEY_CREATION %}⚠️ disabled{% else %}✅ enabled{% endif %}</strong>.</p>
+
 <h4>View API Key</h4>
 
 <form method="POST" action="{{ url_for('admin.get_by_key') }}">

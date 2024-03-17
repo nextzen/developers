@@ -86,5 +86,9 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <button class="btn btn-default" type="submit">Create a new API key</button>
 </form>
+{% if disable_api_key_creation %}
+(API key creation has been disabled by an administrator, but you can still create a new key because you're an admin)
+{% endif %}
+
 {% endif %}
 {% endblock %}
