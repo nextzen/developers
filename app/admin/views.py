@@ -16,10 +16,16 @@ from . import admin_bp
 from ..storage import ApiKey, User, validate_allowed_origins
 from flask_login import current_user, login_required
 
+
+# Return true if the current user is an admin
+def current_user_is_admin():
+    return current_user.social_id in current_app.config.get('ADMIN_WHITELIST')
+
+
 @admin_bp.route('/admin')
 @login_required
 def index():
-    if current_user.social_id not in current_app.config.get('ADMIN_WHITELIST'):
+    if not current_user_is_admin():
         return redirect(url_for('apikey.mine'))
 
     return render_template('admin/index.html')
@@ -27,7 +33,7 @@ def index():
 @admin_bp.route('/admin/by_key', methods=['POST'])
 @login_required
 def get_by_key():
-    if current_user.social_id not in current_app.config.get('ADMIN_WHITELIST'):
+    if not current_user_is_admin():
         return redirect(url_for('apikey.mine'))
 
     apikey = request.form.get('key')
@@ -43,7 +49,7 @@ def get_by_key():
 @admin_bp.route('/admin/keys/<apikey>', methods=['GET', 'POST'])
 @login_required
 def show_key(apikey):
-    if current_user.social_id not in current_app.config.get('ADMIN_WHITELIST'):
+    if not current_user_is_admin():
         return redirect(url_for('apikey.mine'))
 
     k = ApiKey.get_by_api_key(apikey)
@@ -128,7 +134,7 @@ def show_key(apikey):
 @admin_bp.route('/admin/users/<userid>', methods=['GET', 'POST'])
 @login_required
 def show_user(userid):
-    if current_user.social_id not in current_app.config.get('ADMIN_WHITELIST'):
+    if not current_user_is_admin():
         return redirect(url_for('apikey.mine'))
 
     u = User.get_by_user_id(userid)

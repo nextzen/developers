@@ -79,6 +79,8 @@
 
 {% if current_user.admin_locked %}
 <p>⚠️ Your account has been locked by an administrator, so you cannot create more API keys. Please <a href="mailto:hello@nextzen.org">contact us</a> if you have questions.</p>
+{% elif disable_api_key_creation %}
+<p>⚠️ API key creation has been disabled by an administrator. Please <a href="mailto:hello@nextzen.org">contact us</a> if you have questions.</p>
 {% else %}
 <form method="POST" action="{{ url_for('apikey.create') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
