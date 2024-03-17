@@ -1,15 +1,10 @@
 import datetime
 from flask import (
-    abort,
     current_app,
-    escape,
     flash,
-    jsonify,
-    make_response,
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
 from . import admin_bp
@@ -19,7 +14,7 @@ from flask_login import current_user, login_required
 
 # Return true if the current user is an admin
 def current_user_is_admin():
-    return current_user.social_id in current_app.config.get('ADMIN_WHITELIST')
+    return current_user and current_user.social_id in current_app.config.get('ADMIN_WHITELIST')
 
 
 @admin_bp.route('/admin')
