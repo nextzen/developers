@@ -41,7 +41,7 @@ def contact():
 def mine():
     return render_template(
         'apikey/mine.html',
-        disable_api_key_creation=(not current_user_is_admin() and current_app.config.DISABLE_USER_API_KEY_CREATION),
+        disable_api_key_creation=(not current_user_is_admin() and current_app.config.get('DISABLE_USER_API_KEY_CREATION')),
     )
 
 
