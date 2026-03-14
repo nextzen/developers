@@ -1,0 +1,23 @@
+[project]
+name = "nextzen-developers"
+version = "0.1.0"
+description = "Developer portal for Nextzen tile services"
+requires-python = ">=3.12"
+dependencies = [
+    "flask",
+    "flask-bootstrap",
+    "flask-caching",
+    "flask-login",
+    "flask-wtf",
+    "rauth",
+    "raven[flask]",
+    "cachetools",
+    "boto3",
+    "blinker",
+]
+
+[dependency-groups]
+dev = [
+    "zappa",
+    "pylint",
+]
