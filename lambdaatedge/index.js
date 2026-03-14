@@ -2,13 +2,13 @@
 
 const axios = require('axios');
 const querystring = require('querystring');
-const LRU = require("lru-cache"),
-      lru = LRU(100);
+const { LRUCache } = require("lru-cache");
 const ONE_HOUR = 1 * 60 * 60 * 1000;
+const lru = new LRUCache({ max: 100, ttl: ONE_HOUR });
 
 exports.handler = (event, context, callback) => {
     const request = event.Records[0].cf.request;
-    console.log(lru.length + " keys in the lru");
+    console.log(lru.size + " keys in the lru");
 
     // Don't check for the preview.html page
     if (request.uri === '/preview.html') {
@@ -66,7 +66,7 @@ exports.handler = (event, context, callback) => {
         .then(function (response) {
             console.log(`Received verify response ` + JSON.stringify(response.data));
 
-            lru.set(verify_querystring, response.data, ONE_HOUR);
+            lru.set(verify_querystring, response.data);
 
             console.log(`Set key ${verify_querystring} to ` + JSON.stringify(response.data));
 
