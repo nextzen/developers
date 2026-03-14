@@ -3,8 +3,13 @@
 {% block container %}
 {{ super() }}
 <div class='page-header'>
-    <h3>Welcome back!</h3>
-    <p>Sign in to your Nextzen account to manage API keys</p>
+    <h3>Login</h3>
+    <p>Sign in to your existing Nextzen account to manage API keys.</p>
+
+    <div class="alert alert-warning">
+        <strong>Note:</strong> New signups are no longer available. If you don't already have an account,
+        please see our <a href="{{ url_for('apikey.index') }}">homepage</a> for recommended alternative providers.
+    </div>
 </div>
 
 {%- with messages = get_flashed_messages(with_categories=True) %}

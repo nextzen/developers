@@ -3,26 +3,31 @@
 {% block container %}
 {{ super() }}
 <div class="jumbotron">
-    <h1>Map Tiles</h1>
-    <p class="lead">Simple vector and terrain tiles for your maps, from the open Tilezen project.</p>
-    {% if current_user.is_anonymous %}
-    <p><a class="btn btn-lg btn-success" href="{{ url_for('auth.login') }}" role="button">Sign up today</a></p>
-    {% else %}
-    <p><a class="btn btn-lg btn-success" href="{{ url_for('apikey.mine') }}" role="button">View my keys</a></p>
-    {% endif %}
+    <h1>Nextzen Tiles</h1>
+    <p class="lead">Nextzen is no longer accepting new signups.</p>
+    <p>We provided vector and terrain tiles from the open <a href="https://github.com/tilezen/">Tilezen</a> project as a continuation of Mapzen's tile services. We are winding down this service.</p>
 </div>
 
 <div class="row marketing">
-    <div class="col-lg-6">
-        <h4>Miss Mapzen's Vector Tiles?</h4>
-        <p><a href="https://github.com/tilezen/">Tilezen</a> is the industrial strength open software that powered Mapzen's vector and terrain tiles.</p>
-    </div>
-
-    <div class="col-lg-6">
-        <h4>Beautiful Basemaps</h4>
-        <p>From Bubble Wrap to Refill and Walkabout beautiful <a href="/about.html">map styles</a> pair with Tilezen's data schema.</p>
+    <div class="col-lg-12">
+        <h4>Looking for vector or terrain tiles?</h4>
+        <p>We recommend these providers as alternatives:</p>
+        <ul>
+            <li><a href="https://stadiamaps.com/">Stadia Maps</a> &mdash; offers Stamen styles and vector tiles built on Tilezen</li>
+            <li><a href="https://www.maptiler.com/">MapTiler</a> &mdash; vector tiles, terrain tiles, and hosted map styles</li>
+            <li><a href="https://protomaps.com/">Protomaps</a> &mdash; open source, self-hostable vector map tiles</li>
+        </ul>
     </div>
 </div>
+
+{% if not current_user.is_anonymous %}
+<div class="row marketing">
+    <div class="col-lg-12">
+        <h4>Existing users</h4>
+        <p><a class="btn btn-default" href="{{ url_for('apikey.mine') }}" role="button">View my keys</a></p>
+    </div>
+</div>
+{% endif %}
 
 <footer class="footer">
 <p>&copy; 2018 Nextzen</p>

@@ -4,9 +4,16 @@
 {{ super() }}
 <div class='page-header'>
     <h3>About</h3>
-    <p>We're proud to offer long-term support for the maps, basemap designs, and the vector and terrain tile data that have powered Mapzen's cartography. To enjoy the maps into the future, past Mapzen's early 2018 shutdown, you'll need to <a href="{{ url_for('apikey.index') }}">sign up for a Nextzen API key</a> today, and make a few updates to your projects.</p>
 
-    <p>Generally speaking you'll need to swap <code>mapzen.com</code> for <code>nextzen.org</code>, and include the <code>www</code> subdomain in URL paths.
+    <div class="alert alert-warning">
+        <strong>Note:</strong> Nextzen is no longer accepting new signups or API key requests.
+        If you are looking for vector or terrain tiles, we recommend
+        <a href="https://stadiamaps.com/">Stadia Maps</a>,
+        <a href="https://www.maptiler.com/">MapTiler</a>, or
+        <a href="https://protomaps.com/">Protomaps</a> as alternatives.
+    </div>
+
+    <p>Nextzen offered long-term support for the maps, basemap designs, and the vector and terrain tile data that powered Mapzen's cartography after Mapzen's early 2018 shutdown.</p>
 
     <h4>Vector Tile Endpoints</h4>
 
@@ -25,60 +32,6 @@
       <li><code>https://tile.nextzen.org/tilezen/terrain/v1/geotiff/{z}/{x}/{y}.tif?api_key=your-nextzen-api-key</code></li>
       <li><code>https://tile.nextzen.org/tilezen/terrain/v1/skadi/{N|S}{y}/{N|S}{y}{E|W}{x}.hgt.gz?api_key=your-nextzen-api-key</code></li>
     </ul>
-
-    <h4>Tangram JS Library</h4>
-
-    <ul>
-      <li><code>&lt;script type="text/javascript" src="https://www.nextzen.org/tangram/0.15/tangram.min.js"&gt;&lt;/script&gt;</code></li>
-    </ul>
-
-    <h4>Basemap Resources</h4>
-
-    <ul>
-      <li><code>https://www.nextzen.org/carto/bubble-wrap-style/10/bubble-wrap-style.zip</code></li>
-      <li><code>https://www.nextzen.org/carto/cinnabar-style/10/cinnabar-style.zip</code></li>
-      <li><code>https://www.nextzen.org/carto/refill-style/12/refill-style.zip</code></li>
-      <li><code>https://www.nextzen.org/carto/tron-style/6/tron-style.zip</code></li>
-      <li><code>https://www.nextzen.org/carto/walkabout-style/8/walkabout-style.zip</code></li>
-      <li><code>https://www.nextzen.org/carto/sdk-default-style/1.1/sdk-default-style.zip</code></li>
-    </ul>
-
-    <p><i>Basemaps last major update: 2018-12-05</i></p>
-
-    <h4>TileJSON Endpoints</h4>
-
-    <p>Nextzen Tiles expose <a href="https://github.com/mapbox/tilejson-spec">Tile JSON</a> documents for tools that support them. For example:
-
-    <ul>
-      <li><code>https://tile.nextzen.org/tilezen/vector/v1/all/tilejson.mvt.json</code></li>
-      <li><code>https://tile.nextzen.org/tilezen/vector/v1/512/all/tilejson.geojson.json</code></li>
-    </ul>
-
-    <h4>Using Nextzen tiles with earlier basemap versions</h4>
-
-    <p>If you need to keep a basemap pegged at an earlier version it's possible to mix and match tile sources and basemap versions. Below we import the last major version of the Bubble Wrap style pre-Mapzen shutdown but source map data from Nextzen's tile endpoint and specify a new API key. The example is given in Tangram JS and Leaflet syntax:</p>
-
-    <pre>
-var layer = Tangram.leafletLayer({
-  scene: {
-    import: [
-      'https://www.nextzen.org/carto/bubble-wrap-style/8/bubble-wrap-style.zip',
-      'https://www.nextzen.org/carto/bubble-wrap-style/8/themes/label-10.zip'
-    ],
-    sources: {
-      mapzen: {
-        url: 'https://{s}.tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt',
-        url_subdomains: ['a', 'b', 'c', 'd'],
-        url_params: {
-            api_key: 'your-nextzen-api-key'
-        },
-        tile_size: 512,
-        max_zoom: 16
-      }
-    }
-  },
-  attribution: '&lt;a href="https://mapzen.com/tangram" target="_blank">Tangram&lt;/a&gt; | &lt;a href="http://www.openstreetmap.org/copyright" target="_blank"&gt;&copy; OpenStreetMap contributors&lt;/a&gt; | &lt;a href="https://www.nextzen.com/" target="_blank"&gt;Nextzen&lt;/a&gt;'
-});</pre>
 
     <h4>See Also</h4>
 
